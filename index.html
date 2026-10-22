@@ -36,6 +36,7 @@ main{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .play{background:#22a06b;flex:1 1 140px}.unl{background:#2a1036;border-color:#ffd36b;color:#ffd36b;flex:0 1 auto}
 .soon .play{background:#555;border-color:#999;cursor:default}
+.row .btn{font-size:18px;min-height:48px;border-radius:24px}.gshare{background:#e0439a;flex:1 1 120px}
 .lbx{max-width:900px;margin:0 auto 10px;padding:0 14px;display:none}
 .lbx h3{color:#7ffcf0;margin:6px 0}.lbg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 .lb{background:rgba(20,6,28,.88);border:2px solid #7ffcf0;border-radius:14px;padding:8px 12px}.lb b{color:#ffb37a}.lb ol{margin:6px 0 0;padding-left:22px;font-size:14px}
@@ -78,7 +79,7 @@ function render(){document.body.classList.toggle('vip',VIP);
  $('games').innerHTML=GAMES.map(g=>{const href=g.url+'?sample='+(VIP?'0':SAMPLE_PARAM);
   const img=`<img src="${esc(g.cover)}" width="720" height="378" alt="${esc(g.title)} cover art" loading="lazy">`;
   if(!g.live)return `<div class="card soon" data-id="${esc(g.id)}">${img}<div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p><div class="row"><span class="btn play" aria-disabled="true">⏳ Coming soon</span></div></div></div>`;
-  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}</div></div></div>`}).join('')}
+  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}<button class="btn gshare" type="button" data-id="${esc(g.id)}" aria-label="Share ${esc(g.title)} (free sample link)">🔗 Share</button></div></div></div>`}).join('')}
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function checkKey(){const q=new URLSearchParams(location.search),k=q.get('vip');if(k===null)return;
  try{if(crypto&&crypto.subtle&&await sha(k)===VIP_HASH){localStorage.setItem(VK,VIP_HASH);VIP=true;render()}}catch(e){}
@@ -87,9 +88,13 @@ async function checkKey(){const q=new URLSearchParams(location.search),k=q.get('
 const SH={title:"Kelly's Arcade",text:"Play Kelly's games free: critters, cooking and alien chaos!",url:PUBLIC_URL};
 function toast(){const t=$('toast');t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',1800)}
 function legacyCopy(s){const a=document.createElement('textarea');a.value=s;a.setAttribute('readonly','');a.style.cssText='position:fixed;left:-999px;top:0;opacity:0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok}
-async function share(){if(navigator.share){try{await navigator.share(SH);return 'shared'}catch(e){if(e&&e.name==='AbortError')return 'cancelled'}}
- try{await navigator.clipboard.writeText(SH.url);toast();return 'copied'}catch(e){if(legacyCopy(SH.url)){toast();return 'copied'}return 'failed'}}
-$('shareBtn').addEventListener('click',share);
+async function share(d){d=d||SH;if(navigator.share){try{await navigator.share(d);return 'shared'}catch(e){if(e&&e.name==='AbortError')return 'cancelled'}}
+ try{await navigator.clipboard.writeText(d.url);toast();return 'copied'}catch(e){if(legacyCopy(d.url)){toast();return 'copied'}return 'failed'}}
+$('shareBtn').addEventListener('click',()=>share());
+// Per-game Share: ALWAYS the free-sample link (?sample=589), even for Kelly in VIP/full mode
+function gameShareData(g){return{title:g.title,text:`Play a free sample of ${g.title} from Kelly's Arcade!`,url:g.url+'?sample='+SAMPLE_PARAM}}
+function shareGame(id){const g=GAMES.find(x=>x.id===id);if(!g||!g.live)return Promise.resolve('none');return share(gameShareData(g))}
+$('games').addEventListener('click',e=>{const b=e.target.closest('.gshare');if(!b)return;e.preventDefault();shareGame(b.dataset.id)});
 // Install (PWA)
 let dp=null;const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
@@ -105,5 +110,5 @@ async function loadLB(){const out=[];for(const g of GAMES.filter(g=>g.live))for(
  if(out.length){$('lbg').innerHTML=out.join('');$('lbx').style.display='block'}}
 render();checkKey();loadLB();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
-window.__ka={share,SH,GAMES,bundlePrice,get vip(){return VIP}};
+window.__ka={share,shareGame,gameShareData,SH,GAMES,bundlePrice,get vip(){return VIP}};
 </script></body></html>
