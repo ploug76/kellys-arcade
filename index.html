@@ -65,7 +65,7 @@ const VIP_HASH='9acf609e3e46502d16e256da7e6ee21267d075eb09f82d65017907a2767315ae
 const GAMES=[
  {id:'kelly-crunch',title:'Kelly Crunch',desc:'Feed little critters to bigger ones until they POP: chain reactions, bombs & puzzles!',url:'https://ploug76.github.io/kelly-crunch/',cover:'covers/kelly-crunch.gif',live:true,lb:[['kelly-crunch__endless','Endless'],['kelly-crunch__classic','Classic']]},
  {id:'alien-crunch',title:"Dr. K's Alien Feeding Frenzy",desc:'Neon aliens, slime, lasers and chain reactions. Feed the frenzy!',url:'https://ploug76.github.io/alien-crunch/',cover:'covers/alien-crunch.gif',live:true,lb:[['alien-crunch','Top']]},
- {id:'chef-kellys-cooking-challenge',title:"Chef Kelly's Cooking Challenge",desc:'Chop, cook, plate and serve with Chef Kelly before the timer runs out!',url:'https://ploug76.github.io/chef-kellys-cooking-challenge/',cover:'covers/chef-kellys-cooking-challenge-soon.png',live:false,lb:[]},
+ {id:'chef-kellys-cooking-challenge',title:"Chef Kelly's Cooking Challenge",desc:'Chop, cook, plate and serve with Chef Kelly before the timer runs out!',url:'https://ploug76.github.io/chef-kellys-cooking-challenge/',cover:'covers/chef-kellys-cooking-challenge.gif',live:true,lb:[['chef-kellys-cooking-challenge','Top']]},
 ];
 // Whole-arcade bundle: $4.99 covers the first 3 live games, +$1.00 for each live game after that.
 function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+Math.max(0,n-3)*1).toFixed(2)}
