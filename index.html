@@ -112,4 +112,4 @@ async function loadLB(){const out=[];for(const g of GAMES.filter(g=>g.live))for(
 render();checkKey();loadLB();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
 window.__ka={share,shareGame,gameShareData,SH,GAMES,bundlePrice,get vip(){return VIP}};
-</script></body></html>
+</script><!--unlockgrant--><script>(()=>{const G={"kelly-crunch": "14cf87400e6881d8d68c75100c05c9beb1ec97354832ac0590c5dd95734f7636", "alien-crunch": "ef3811045c1735b6d3700f5517f36783c6d41abbd0336610ce6fa712822f2cce", "kellys-fill-it-in": "459b8181becb62aed4fe343e7633c8a610f1204a95938992fd93625f997adf53"};const full=()=>!!(window.__ka&&window.__ka.vip);function grant(){if(!full())return false;for(const r in G){try{localStorage.setItem("pa_unl:"+r,G[r])}catch(e){}}return true}grant();document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("a"))grant()},true);setInterval(grant,2000);window.__unlockGrant={grant,full,G}})()</script><!--/unlockgrant--></body></html>
