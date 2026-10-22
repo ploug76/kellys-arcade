@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kelly's Arcade</title>
+<meta name="description" content="Kelly's Arcade: play Kelly's games free in your browser. Critters, cooking and alien chaos!">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Kelly's Arcade"><meta property="og:title" content="Kelly's Arcade"><meta property="og:description" content="Play Kelly's games free in your browser: critters, cooking and alien chaos!"><meta property="og:url" content="https://ploug76.github.io/kellys-arcade/"><meta property="og:image" content="https://ploug76.github.io/kellys-arcade/cover.png"><meta property="og:image:secure_url" content="https://ploug76.github.io/kellys-arcade/cover.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Kelly's Arcade cover with a cartoon Kelly"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Kelly's Arcade"><meta name="twitter:description" content="Play Kelly's games free in your browser: critters, cooking and alien chaos!"><meta name="twitter:image" content="https://ploug76.github.io/kellys-arcade/cover.png">
+<meta name="theme-color" content="#2a1036"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Kelly's Arcade">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:#1c0b26;color:#fff;font-family:"Trebuchet MS",system-ui,-apple-system,"Segoe UI",sans-serif;
+ background-image:radial-gradient(circle at 15% 0%,rgba(255,122,47,.28),transparent 45%),radial-gradient(circle at 90% 10%,rgba(0,230,210,.18),transparent 40%),linear-gradient(rgba(255,122,47,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,122,47,.10) 1px,transparent 1px);background-size:auto,auto,26px 26px,26px 26px;
+ padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+header{text-align:center;padding:20px 14px 6px;max-width:900px;margin:0 auto}
+.hero{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.av{width:110px;height:110px;border-radius:50%;border:5px solid #ff7a2f;box-shadow:0 0 22px rgba(0,240,220,.7),0 0 4px #fff inset;background:#2a1036;flex:none}
+h1{margin:0;font-family:"Arial Black","Trebuchet MS",sans-serif;font-size:clamp(36px,10vw,64px);line-height:.95;letter-spacing:1px;text-align:left}
+h1 .a{display:block;color:#ffb37a;text-shadow:0 0 12px #ff6e28,0 3px 0 #5a1d0a}
+h1 .b{display:block;color:#7ffcf0;text-shadow:0 0 14px #00e6d2,0 3px 0 #0b3b44}
+.sub{margin:12px 0 4px;color:#ffd36b;font-weight:bold;font-size:16px}
+.tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border-radius:22px;border:3px solid #fff;font:bold 16px "Trebuchet MS",system-ui,sans-serif;color:#fff;text-decoration:none;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.share{background:#e0439a}.inst{background:#1f7a8c;display:none}
+.vipb{display:none;margin:10px auto 0;padding:6px 14px;border-radius:16px;background:linear-gradient(90deg,#ff7a2f,#ffb37a);color:#2a1036;font-weight:bold;font-size:14px;width:max-content;max-width:100%}
+body.vip .vipb{display:block}
+#iosTip{display:none;max-width:340px;margin:8px auto 0;font-size:14px;background:rgba(0,0,0,.5);border:2px solid #7ffcf0;border-radius:12px;padding:8px 12px}
+.bundle{max-width:900px;margin:14px auto 0;padding:14px 16px;border-radius:18px;border:3px solid #ffd36b;background:linear-gradient(120deg,#5a1d0a,#2a1036 60%,#0b3b44);box-shadow:0 0 18px rgba(255,211,107,.35);display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.bundle p{margin:0;font-size:16px;line-height:1.3;flex:1 1 220px}.bundle b{color:#ffd36b;font-size:18px}
+.bundle .btn{background:#ff7a2f;color:#2a1036;border-color:#fff}
+body.vip .bundle,body.vip .price,body.vip .unl{display:none!important}
+.wrapb{padding:0 14px}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:16px 14px;max-width:1100px;margin:0 auto}
+.card{display:flex;flex-direction:column;background:rgba(20,6,28,.88);border:3px solid #ff7a2f;border-radius:18px;overflow:hidden;box-shadow:0 0 16px rgba(255,122,47,.3)}
+.card img{display:block;width:100%;height:auto;aspect-ratio:720/378;object-fit:cover;background:#000}
+.cb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.cb h2{margin:0;font-size:20px;color:#ffb37a}.cb p{margin:0;font-size:14px;color:#e6d6ee;line-height:1.35}
+.price{font-size:13px;color:#7ffcf0;font-weight:bold}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.play{background:#22a06b;flex:1 1 140px}.unl{background:#2a1036;border-color:#ffd36b;color:#ffd36b;flex:0 1 auto}
+.soon .play{background:#555;border-color:#999;cursor:default}
+.lbx{max-width:900px;margin:0 auto 10px;padding:0 14px;display:none}
+.lbx h3{color:#7ffcf0;margin:6px 0}.lbg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.lb{background:rgba(20,6,28,.88);border:2px solid #7ffcf0;border-radius:14px;padding:8px 12px}.lb b{color:#ffb37a}.lb ol{margin:6px 0 0;padding-left:22px;font-size:14px}
+footer{text-align:center;color:#c9b6d4;font-size:13px;padding:12px 16px 28px}
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#1f9d55;color:#fff;border:2px solid #fff;border-radius:18px;padding:8px 16px;font-weight:bold;display:none;z-index:9}
+</style></head><body>
+<header>
+ <div class="hero"><img class="av" src="kelly-avatar.png" width="110" height="110" alt="Cartoon of Kelly with curly red hair"><h1><span class="a">KELLY'S</span><span class="b">ARCADE</span></h1></div>
+ <p class="sub" id="sub">Pick a game and press play!</p>
+ <div class="vipb" id="vipb">⭐ Kelly's full arcade</div>
+ <div class="tools"><button class="btn share" id="shareBtn" type="button">🔗 Share Arcade</button><button class="btn inst" id="instBtn" type="button">📲 Install</button></div>
+ <div id="iosTip">📲 On iPhone/iPad: tap Share <b>⬆</b> then “Add to Home Screen”.</div>
+</header>
+<div class="wrapb"><div class="bundle" id="bundle"><p><b>🎁 Unlock the whole arcade</b><br>All of Kelly's games, full versions: <b id="bundlePrice">$4.99</b></p><a class="btn" id="bundleBtn" href="#" target="_blank" rel="noopener">🔓 Unlock all</a></div></div>
+<main id="games"></main>
+<section class="lbx" id="lbx"><h3>🏆 Top Scores</h3><div class="lbg" id="lbg"></div></section>
+<footer>Every game plays right in your phone's browser. Have fun! 🍳👽</footer>
+<div id="toast" role="status" aria-live="polite">Link copied!</div>
+<script>
+// ===== Kelly's Arcade config =====
+const PUBLIC_URL='https://ploug76.github.io/kellys-arcade/';   // Share ALWAYS uses this (never the VIP key)
+const UNLOCK_URL='https://ko-fi.com/five8nine/commissions?commissionAlias=5c81b9373a'; // $1.99 per-game unlock
+const BUNDLE_URL='https://ko-fi.com/five8nine/commissions';     // swap in a dedicated bundle listing later
+const SAMPLE_PARAM='589';  // storefront sample mode; '589' makes the in-game unlock screen point at the five8nine $1.99 listing
+const VIP_HASH='9acf609e3e46502d16e256da7e6ee21267d075eb09f82d65017907a2767315ae'; // sha256 of the VIP key (key itself is not in this file)
+// To turn a game on: set live:true. To add a game: add one line.
+const GAMES=[
+ {id:'kelly-crunch',title:'Kelly Crunch',desc:'Feed little critters to bigger ones until they POP: chain reactions, bombs & puzzles!',url:'https://ploug76.github.io/kelly-crunch/',cover:'covers/kelly-crunch.gif',live:true,lb:[['kelly-crunch__endless','Endless'],['kelly-crunch__classic','Classic']]},
+ {id:'alien-crunch',title:"Dr. K's Alien Feeding Frenzy",desc:'Neon aliens, slime, lasers and chain reactions. Feed the frenzy!',url:'https://ploug76.github.io/alien-crunch/',cover:'covers/alien-crunch.gif',live:true,lb:[['alien-crunch','Top']]},
+ {id:'chef-kellys-cooking-challenge',title:"Chef Kelly's Cooking Challenge",desc:'Chop, cook, plate and serve with Chef Kelly before the timer runs out!',url:'https://ploug76.github.io/chef-kellys-cooking-challenge/',cover:'covers/chef-kellys-cooking-challenge-soon.png',live:false,lb:[]},
+];
+// Whole-arcade bundle: $4.99 covers the first 3 live games, +$1.00 for each live game after that.
+function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+Math.max(0,n-3)*1).toFixed(2)}
+// ===== end config =====
+const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const VK='ka_vip';let VIP=false;try{VIP=localStorage.getItem(VK)===VIP_HASH}catch(e){}
+function render(){document.body.classList.toggle('vip',VIP);
+ $('sub').textContent=VIP?'Welcome back, Kelly! Every game is unlocked.':'Tap a game to play a free sample!';
+ $('bundlePrice').textContent='$'+bundlePrice(GAMES);$('bundleBtn').href=BUNDLE_URL;
+ $('games').innerHTML=GAMES.map(g=>{const href=g.url+'?sample='+(VIP?'0':SAMPLE_PARAM);
+  const img=`<img src="${esc(g.cover)}" width="720" height="378" alt="${esc(g.title)} cover art" loading="lazy">`;
+  if(!g.live)return `<div class="card soon" data-id="${esc(g.id)}">${img}<div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p><div class="row"><span class="btn play" aria-disabled="true">⏳ Coming soon</span></div></div></div>`;
+  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}</div></div></div>`}).join('')}
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function checkKey(){const q=new URLSearchParams(location.search),k=q.get('vip');if(k===null)return;
+ try{if(crypto&&crypto.subtle&&await sha(k)===VIP_HASH){localStorage.setItem(VK,VIP_HASH);VIP=true;render()}}catch(e){}
+ q.delete('vip');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}
+// Share: always the plain public link
+const SH={title:"Kelly's Arcade",text:"Play Kelly's games free: critters, cooking and alien chaos!",url:PUBLIC_URL};
+function toast(){const t=$('toast');t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',1800)}
+function legacyCopy(s){const a=document.createElement('textarea');a.value=s;a.setAttribute('readonly','');a.style.cssText='position:fixed;left:-999px;top:0;opacity:0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok}
+async function share(){if(navigator.share){try{await navigator.share(SH);return 'shared'}catch(e){if(e&&e.name==='AbortError')return 'cancelled'}}
+ try{await navigator.clipboard.writeText(SH.url);toast();return 'copied'}catch(e){if(legacyCopy(SH.url)){toast();return 'copied'}return 'failed'}}
+$('shareBtn').addEventListener('click',share);
+// Install (PWA)
+let dp=null;const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('instBtn').style.display='inline-flex'});
+addEventListener('appinstalled',()=>{dp=null;$('instBtn').style.display='none'});
+if(isIOS&&!standalone())$('instBtn').style.display='inline-flex';
+$('instBtn').addEventListener('click',async()=>{if(dp){const e=dp;dp=null;try{e.prompt();await e.userChoice}catch(_){}$('instBtn').style.display='none';return}const t=$('iosTip');t.style.display=t.style.display==='block'?'none':'block'});
+// Top scores (central leaderboard, read-only). Hidden when there are no scores yet.
+const FS={projectId:'peters-arcade-3ecb5',apiKey:'AIzaSyDF1az3jKEZFcT7FP5j1FzjslDxMGL2VmE'};
+async function topScores(board,n=5){const r=await fetch(`https://firestore.googleapis.com/v1/projects/${FS.projectId}/databases/(default)/documents/boards/${board}:runQuery?key=${FS.apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({structuredQuery:{from:[{collectionId:'scores'}],orderBy:[{field:{fieldPath:'k'},direction:'DESCENDING'}],limit:n}})});
+ if(!r.ok)return[];const j=await r.json();return j.filter(x=>x.document).map(x=>{const F=x.document.fields||{};return{name:(F.name||{}).stringValue||'?',score:+((F.score||{}).integerValue||0)}})}
+async function loadLB(){const out=[];for(const g of GAMES.filter(g=>g.live))for(const [b,lab] of (g.lb||[])){try{const rows=await topScores(b);if(rows.length)out.push(`<div class="lb"><b>${esc(g.title)}${g.lb.length>1?' · '+esc(lab):''}</b><ol>${rows.map(r=>`<li>${esc(r.name)} — ${r.score.toLocaleString()}</li>`).join('')}</ol></div>`)}catch(e){}}
+ if(out.length){$('lbg').innerHTML=out.join('');$('lbx').style.display='block'}}
+render();checkKey();loadLB();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
+window.__ka={share,SH,GAMES,bundlePrice,get vip(){return VIP}};
+</script></body></html>
