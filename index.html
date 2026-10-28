@@ -71,6 +71,7 @@ const GAMES=[
  {id:'kellys-fill-it-in',title:"Kelly's Fill-It-In",desc:'No clues! Fit every word into the criss-cross grid. Bible, Food and Random puzzles with big letters.',url:'https://ploug76.github.io/kellys-fill-it-in/',cover:'covers/kellys-fill-it-in.gif',live:true,lb:[['kellys-fill-it-in__total','Total']]},
  {id:'helenes-treasure-chest',title:"Helene's Treasure Chest",desc:'Swap sparkling jewels, match 3 or more and fill the treasure chest. Classic, Zen and a 2-minute Rush.',url:'https://ploug76.github.io/helenes-treasure-chest/',cover:'covers/helenes-treasure-chest.gif',live:true,lb:[['helenes-treasure-chest__classic','Classic'],['helenes-treasure-chest__rush','Treasure Rush']]},
  {id:'kellys-giraffe-getaway',title:"Kelly's Giraffe Getaway",desc:'Ride Ginny the green polka-dot giraffe: neck-ram, swing and slurp across 9 levels to rescue Gigi!',url:'https://ploug76.github.io/kellys-giraffe-getaway/',cover:'covers/kellys-giraffe-getaway.gif',live:true,lb:[['kellys-giraffe-getaway','Top']]},
+ {id:'kellys-giraffe-adventure',title:"Kelly's Giraffe Adventure",desc:"Kelly's first giraffe game! Run, jump, neck-ram, neck-grab and slurp across 4 Savanna levels, then beat Rhino Rumble.",url:'https://ploug76.github.io/kellys-giraffe-adventure/',cover:'covers/kellys-giraffe-adventure.gif',live:true},
 ];
 // Whole-arcade bundle: $4.99 covers the first 3 live games, +$1.00 for each live game after that.
 function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+Math.max(0,n-3)*1).toFixed(2)}
