@@ -112,4 +112,40 @@ async function loadLB(){const out=[];for(const g of GAMES.filter(g=>g.live))for(
 render();checkKey();loadLB();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
 window.__ka={share,shareGame,gameShareData,SH,GAMES,bundlePrice,get vip(){return VIP}};
-</script><!--unlockgrant--><script>(()=>{const G={"kelly-crunch": "14cf87400e6881d8d68c75100c05c9beb1ec97354832ac0590c5dd95734f7636", "alien-crunch": "ef3811045c1735b6d3700f5517f36783c6d41abbd0336610ce6fa712822f2cce", "chef-kellys-cooking-challenge": "280eba97a928c3f3cf976cfb7dbdfc4eac378dcbfea232960918d7db33c70691", "kellys-fill-it-in": "459b8181becb62aed4fe343e7633c8a610f1204a95938992fd93625f997adf53"};const full=()=>!!(window.__ka&&window.__ka.vip);function grant(){if(!full())return false;for(const r in G){try{localStorage.setItem("pa_unl:"+r,G[r])}catch(e){}}return true}grant();document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("a"))grant()},true);setInterval(grant,2000);window.__unlockGrant={grant,full,G}})()</script><!--/unlockgrant--></body></html>
+</script><!--unlockgrant--><script>(()=>{const G={"kelly-crunch": "14cf87400e6881d8d68c75100c05c9beb1ec97354832ac0590c5dd95734f7636", "alien-crunch": "ef3811045c1735b6d3700f5517f36783c6d41abbd0336610ce6fa712822f2cce", "chef-kellys-cooking-challenge": "280eba97a928c3f3cf976cfb7dbdfc4eac378dcbfea232960918d7db33c70691", "kellys-fill-it-in": "459b8181becb62aed4fe343e7633c8a610f1204a95938992fd93625f997adf53"};const full=()=>!!(window.__ka&&window.__ka.vip);function grant(){if(!full())return false;for(const r in G){try{localStorage.setItem("pa_unl:"+r,G[r])}catch(e){}}return true}grant();document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("a"))grant()},true);setInterval(grant,2000);window.__unlockGrant={grant,full,G}})()</script><!--/unlockgrant--><!--vault--><style>#kvault{max-width:900px;margin:6px auto 14px;padding:0 14px;text-align:center}#kvault h2{color:#fcd858;letter-spacing:4px;font-size:20px;margin:10px 0;text-shadow:3px 3px 0 #f83838}
+#kvDoor{display:block;width:100%;max-width:420px;margin:0 auto;background:#14061c;border:3px solid #fcd858;border-radius:14px;color:#fff;font:bold 18px system-ui,sans-serif;padding:18px;cursor:pointer;touch-action:manipulation}#kvDoor span{display:block;font-size:14px;font-weight:normal;color:#c9b6d4;margin-top:6px}
+#kvOv{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));box-sizing:border-box}#kvOv.on{display:flex}
+#kvBox{box-sizing:border-box;width:min(380px,100%);max-height:100%;overflow:auto;background:#0c0c0c;border:3px solid #fcfcfc;outline:3px solid #f83838;padding:14px;text-align:center;position:relative;color:#fff}#kvBox h3{margin:0 40px 8px;color:#fcd858;letter-spacing:3px}
+#kvX{position:absolute;top:6px;right:6px;width:40px;height:40px;border:2px solid #fcfcfc;background:#f83838;color:#fff;font:bold 18px monospace;cursor:pointer}
+#kvCode{box-sizing:border-box;width:100%;height:50px;font:bold 26px "Courier New",monospace;letter-spacing:10px;text-align:center;border:3px solid #fcd858;background:#111;color:#fcfcfc;margin:6px 0}
+.kvb{box-sizing:border-box;width:100%;min-height:46px;margin-top:8px;font:bold 17px "Courier New",monospace;border:3px solid #fcfcfc;background:#f83838;color:#fff;cursor:pointer}.kvb:disabled{opacity:.5}
+#kvMsg{min-height:20px;color:#ff9a9a;font-size:14px;margin-top:6px}#kvGames{display:grid;gap:12px;margin-top:8px;text-align:left}
+.kvt{display:block;color:#fff;text-decoration:none;background:#14061c;border:2px solid #7ffcf0;border-radius:12px;overflow:hidden}.kvt img{display:block;width:100%;height:auto}.kvt b{display:block;padding:8px 10px 0;color:#ffb37a}.kvt span{display:block;padding:4px 10px 10px;font-size:13px;color:#c9b6d4}</style>
+<script>/* THE VAULT: Kelly's own (VIP) view only. Never built for visitors, never on a shared link (Share always sends the plain public URL).
+   The list is loaded from Peter's Arcade vault.json only after the 6-digit code, so it is never in this page. */
+(()=>{const H='bfbe56885d33f05b961223170f34a0af243bd62f2d0d9d3dfdf4e3fa4058c968',FK='ka_vault_fails',LK='ka_vault_until',IDLE=120000,SRC='/peters-arcade/',$=i=>document.getElementById(i);let built=false,open=false,idleT=null;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const vip=()=>!!(window.__ka&&__ka.vip);
+function build(){if(built||!vip())return;built=true;const sec=document.createElement('section');sec.id='kvault';sec.setAttribute('aria-label','The Vault');
+ sec.innerHTML='<h2>🔒 THE VAULT</h2><button id="kvDoor" type="button" aria-label="Open the vault (code required)">🔒 The Vault<span>Locked. Enter the code to open.</span></button>';
+ $('games').after(sec);const ov=document.createElement('div');ov.id='kvOv';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Vault');
+ ov.innerHTML='<div id="kvBox"><button id="kvX" type="button" aria-label="Close">✕</button><div id="kvLock"><h3>VAULT</h3><div>Enter the 6-digit code</div><input id="kvCode" type="password" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]*" aria-label="Vault code"><button id="kvGo" class="kvb" type="button">OPEN</button><div id="kvMsg" role="status"></div></div><div id="kvIn" hidden><h3>🔓 THE VAULT</h3><div id="kvGames"></div><button id="kvClose" class="kvb" type="button">LOCK &amp; CLOSE</button></div></div>';
+ document.body.appendChild(ov);const code=$('kvCode'),go=$('kvGo'),msg=$('kvMsg');
+ const until=()=>+localStorage.getItem(LK)||0;
+ function lockMsg(){const l=until()-Date.now();if(l>0){go.disabled=code.disabled=true;msg.textContent='Too many tries. Try again in '+Math.ceil(l/1000)+'s.';return true}go.disabled=code.disabled=false;return false}
+ function relock(){open=false;clearTimeout(idleT);$('kvIn').hidden=true;$('kvLock').hidden=false;$('kvGames').innerHTML='';code.value='';ov.classList.remove('on')}
+ function bump(){if(!open)return;clearTimeout(idleT);idleT=setTimeout(relock,IDLE)}
+ function show(){$('kvLock').hidden=false;$('kvIn').hidden=true;msg.textContent='';code.value='';ov.classList.add('on');if(!lockMsg())setTimeout(()=>code.focus(),50)}
+ async function unlock(){if(!vip())return;let VG=[];try{const r=await fetch(SRC+'vault.json?t='+Date.now(),{cache:'no-store'});if(r.ok)VG=await r.json()}catch(e){}
+  open=true;$('kvLock').hidden=true;$('kvIn').hidden=false;$('kvGames').innerHTML=VG.length?VG.map(g=>{const c=/^https?:/.test(g.cover||'')?g.cover:SRC+(g.cover||'');return '<a class="kvt" href="'+esc(g.url)+'">'+(g.cover?'<img src="'+esc(c)+'" width="720" height="378" alt="'+esc(g.title)+' cover">':'')+'<b>'+esc(g.title)+'</b><span>'+esc(g.desc||'')+'</span></a>'}).join(''):'<p>The vault is empty.</p>';bump()}
+ async function tryCode(){if(lockMsg())return;const v=code.value.trim();if(!/^\d{6}$/.test(v)){msg.textContent='Enter 6 digits.';return}
+  if(await sha(v)===H){localStorage.setItem(FK,'0');msg.textContent='';unlock();return}
+  const f=(+localStorage.getItem(FK)||0)+1;localStorage.setItem(FK,String(f));code.value='';
+  if(f>=5){localStorage.setItem(LK,String(Date.now()+60000));localStorage.setItem(FK,'0');lockMsg()}else msg.textContent='Wrong code. '+(5-f)+' '+(5-f==1?'try':'tries')+' left.'}
+ $('kvDoor').addEventListener('click',show);go.addEventListener('click',tryCode);code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();tryCode()}});
+ $('kvX').addEventListener('click',relock);$('kvClose').addEventListener('click',relock);
+ ['pointerdown','keydown','scroll','touchstart'].forEach(ev=>addEventListener(ev,bump,{passive:true,capture:true}));
+ addEventListener('pagehide',relock);document.addEventListener('visibilitychange',()=>{if(document.hidden)relock()});
+ window.__kvault={relock,get open(){return open}}}
+build();let n=0;const t=setInterval(()=>{build();if(built||++n>40)clearInterval(t)},250)})()</script><!--/vault--></body></html>
