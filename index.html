@@ -25,7 +25,7 @@ body.vip .vipb{display:block}
 .bundle{max-width:900px;margin:14px auto 0;padding:14px 16px;border-radius:18px;border:3px solid #ffd36b;background:linear-gradient(120deg,#5a1d0a,#2a1036 60%,#0b3b44);box-shadow:0 0 18px rgba(255,211,107,.35);display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
 .bundle p{margin:0;font-size:16px;line-height:1.3;flex:1 1 220px}.bundle b{color:#ffd36b;font-size:18px}
 .bundle .btn{background:#ff7a2f;color:#2a1036;border-color:#fff}
-body.vip .bundle,body.vip .price,body.vip .unl{display:none!important}
+body.vip .bundle,body.vip .price,body.vip .unl{display:none!important}body.free .bundle,body.free .price,body.free .unl{display:none!important}
 .wrapb{padding:0 14px}
 main{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:16px 14px;max-width:1100px;margin:0 auto}
 .card{display:flex;flex-direction:column;background:rgba(20,6,28,.88);border:3px solid #ff7a2f;border-radius:18px;overflow:hidden;box-shadow:0 0 16px rgba(255,122,47,.3)}
@@ -60,6 +60,7 @@ footer{text-align:center;color:#c9b6d4;font-size:13px;padding:12px 16px 28px}
 const PUBLIC_URL='https://ploug76.github.io/kellys-arcade/';   // Share ALWAYS uses this (never the VIP key)
 const UNLOCK_URL='https://ko-fi.com/five8nine/commissions?commissionAlias=5c81b9373a'; // $1.99 per-game unlock
 const BUNDLE_URL='https://ko-fi.com/five8nine/commissions';     // swap in a dedicated bundle listing later
+const FORCE_UNLOCKED = true; // Peter 10/28: every game free until further notice (hides $1.99 / bundle prices). Set to false to restore.
 const SAMPLE_PARAM='589';  // storefront sample mode; '589' makes the in-game unlock screen point at the five8nine $1.99 listing
 const VIP_HASH='9acf609e3e46502d16e256da7e6ee21267d075eb09f82d65017907a2767315ae'; // sha256 of the VIP key (key itself is not in this file)
 // To turn a game on: set live:true. To add a game: add one line.
@@ -74,13 +75,13 @@ function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+
 // ===== end config =====
 const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const VK='ka_vip';let VIP=false;try{VIP=localStorage.getItem(VK)===VIP_HASH}catch(e){}
-function render(){document.body.classList.toggle('vip',VIP);
- $('sub').textContent=VIP?'Welcome back, Kelly! Every game is unlocked.':'Tap a game to play a free sample!';
+function render(){document.body.classList.toggle('vip',VIP);document.body.classList.toggle('free',FORCE_UNLOCKED);
+ $('sub').textContent=VIP?'Welcome back, Kelly! Every game is unlocked.':(FORCE_UNLOCKED?'Tap a game and play. Every game is free!':'Tap a game to play a free sample!');
  $('bundlePrice').textContent='$'+bundlePrice(GAMES);$('bundleBtn').href=BUNDLE_URL;
  $('games').innerHTML=GAMES.map(g=>{const href=g.url+'?sample='+(VIP?'0':SAMPLE_PARAM);
   const img=`<img src="${esc(g.cover)}" width="720" height="378" alt="${esc(g.title)} cover art" loading="lazy">`;
   if(!g.live)return `<div class="card soon" data-id="${esc(g.id)}">${img}<div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p><div class="row"><span class="btn play" aria-disabled="true">⏳ Coming soon</span></div></div></div>`;
-  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}<button class="btn gshare" type="button" data-id="${esc(g.id)}" aria-label="Share ${esc(g.title)} (free sample link)">🔗 Share</button></div></div></div>`}).join('')}
+  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP||FORCE_UNLOCKED?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}<button class="btn gshare" type="button" data-id="${esc(g.id)}" aria-label="Share ${esc(g.title)} (free sample link)">🔗 Share</button></div></div></div>`}).join('')}
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function checkKey(){const q=new URLSearchParams(location.search),k=q.get('vip');if(k===null)return;
  try{if(crypto&&crypto.subtle&&await sha(k)===VIP_HASH){localStorage.setItem(VK,VIP_HASH);VIP=true;render()}}catch(e){}
