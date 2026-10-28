@@ -69,6 +69,7 @@ const GAMES=[
  {id:'alien-crunch',title:"Dr. K's Alien Feeding Frenzy",desc:'Neon aliens, slime, lasers and chain reactions. Feed the frenzy!',url:'https://ploug76.github.io/alien-crunch/',cover:'covers/alien-crunch.gif',live:true,lb:[['alien-crunch','Top']]},
  {id:'chef-kellys-cooking-challenge',title:"Chef Kelly's Cooking Challenge",desc:'Chop, cook, plate and serve with Chef Kelly before the timer runs out!',url:'https://ploug76.github.io/chef-kellys-cooking-challenge/',cover:'covers/chef-kellys-cooking-challenge.gif',live:true,lb:[['chef-kellys-cooking-challenge','Top']]},
  {id:'kellys-fill-it-in',title:"Kelly's Fill-It-In",desc:'No clues! Fit every word into the criss-cross grid. Bible, Food and Random puzzles with big letters.',url:'https://ploug76.github.io/kellys-fill-it-in/',cover:'covers/kellys-fill-it-in.gif',live:true,lb:[['kellys-fill-it-in__total','Total']]},
+ {id:'helenes-treasure-chest',title:"Helene's Treasure Chest",desc:'Swap sparkling jewels, match 3 or more and fill the treasure chest. Classic, Zen and a 2-minute Rush.',url:'https://ploug76.github.io/helenes-treasure-chest/',cover:'covers/helenes-treasure-chest.gif',live:true,lb:[['helenes-treasure-chest__classic','Classic'],['helenes-treasure-chest__rush','Treasure Rush']]},
 ];
 // Whole-arcade bundle: $4.99 covers the first 3 live games, +$1.00 for each live game after that.
 function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+Math.max(0,n-3)*1).toFixed(2)}
