@@ -74,8 +74,8 @@ const GAMES=[
  {id:'kellys-giraffe-getaway',title:"Kelly's Giraffe Getaway",desc:'Ride Jinxy the young giraffe: neck-ram, swing and slurp across 9 levels to rescue Gigi, then save Peter in 2 bonus rounds!',url:'https://ploug76.github.io/kellys-giraffe-getaway/',cover:'covers/kellys-giraffe-getaway.gif',live:true,lb:[['kellys-giraffe-getaway','Top']]},
  {id:'kellys-giraffe-adventure',title:"Kelly's Giraffe Adventure",desc:"Kelly's first giraffe game! Run, jump, neck-ram, neck-grab and slurp across 4 Savanna levels, then beat Rhino Rumble.",url:'https://ploug76.github.io/kellys-giraffe-adventure/',cover:'covers/kellys-giraffe-adventure.gif',live:true},
  {id:'escape-from-palm-tree-petes-island',title:"Rescue from Palm Tree Pete's Island",desc:'Stealth rescue: sneak past flashlights and searchlights as Stars & Stripes, brawl goons in VS fights and lead the kids back to the boat. 3 levels.',url:'https://ploug76.github.io/escape-from-palm-tree-petes-island/',cover:'covers/escape-from-palm-tree-petes-island.jpg',live:true,lb:[['escape-from-palm-tree-petes-island','Top']]},
- {id:"jimothys-crossing-16bit",title:"Jimothy's Crossing 16-Bit",desc:"Jimothy's Crossing redrawn in 16-bit: pixel-art Seattle, parallax skyline and a new chiptune soundtrack. Same levels, totally free!",url:"https://ploug76.github.io/jimothys-crossing-16bit/",cover:"covers/jimothys-crossing-16bit.png",live:true,lb:[["jimothys-crossing-16bit",'Top']]},
- {id:"jimothys-crossing-2",title:"Jimothy's Crossing 2",desc:"The 16-bit sequel: hop Jimothy through Pike Place Market and the Locks, past flying fish, tides and sea lions.",url:"https://ploug76.github.io/jimothys-crossing-2/",cover:"covers/jimothys-crossing-2.png",live:true,lb:[["jimothys-crossing-2",'Top']]},
+ {id:"jimothys-crossing-16bit",free:true,title:"Jimothy's Crossing 16-Bit",desc:"Jimothy's Crossing redrawn in 16-bit: pixel-art Seattle, parallax skyline and a new chiptune soundtrack. Same levels, totally free!",url:"https://ploug76.github.io/jimothys-crossing-16bit/",cover:"covers/jimothys-crossing-16bit.png",live:true,lb:[["jimothys-crossing-16bit",'Top']]},
+ {id:"jimothys-crossing-2",free:true,title:"Jimothy's Crossing 2",desc:"The 16-bit sequel: hop Jimothy through Pike Place Market and the Locks, past flying fish, tides and sea lions.",url:"https://ploug76.github.io/jimothys-crossing-2/",cover:"covers/jimothys-crossing-2.png",live:true,lb:[["jimothys-crossing-2",'Top']]},
 ];
 // Whole-arcade bundle: $4.99 covers the first 3 live games, +$1.00 for each live game after that.
 function bundlePrice(games){const n=games.filter(g=>g.live).length;return (4.99+Math.max(0,n-3)*1).toFixed(2)}
@@ -85,10 +85,10 @@ const VK='ka_vip';let VIP=false;try{VIP=localStorage.getItem(VK)===VIP_HASH}catc
 function render(){document.body.classList.toggle('vip',VIP);document.body.classList.toggle('free',FORCE_UNLOCKED);
  $('sub').textContent=VIP?'Welcome back, Kelly! Every game is unlocked.':(FORCE_UNLOCKED?'Tap a game and play. Every game is free!':'Tap a game to play a free sample!');
  $('bundlePrice').textContent='$'+bundlePrice(GAMES);$('bundleBtn').href=BUNDLE_URL;
- $('games').innerHTML=GAMES.map(g=>{const href=g.url+'?sample='+(VIP?'0':SAMPLE_PARAM);
+ $('games').innerHTML=GAMES.map(g=>{const href=g.free?g.url:g.url+'?sample='+(VIP?'0':SAMPLE_PARAM); // free:true = always-free game, no sample/unlock (Jimothy games)
   const img=`<img src="${esc(g.cover)}" width="720" height="378" alt="${esc(g.title)} cover art" loading="lazy">`;
   if(!g.live)return `<div class="card soon" data-id="${esc(g.id)}">${img}<div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p><div class="row"><span class="btn play" aria-disabled="true">⏳ Coming soon</span></div></div></div>`;
-  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP||FORCE_UNLOCKED?'Play':'Play sample'}</a>${VIP?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}<button class="btn gshare" type="button" data-id="${esc(g.id)}" aria-label="Share ${esc(g.title)} (free sample link)">🔗 Share</button></div></div></div>`}).join('')}
+  return `<div class="card" data-id="${esc(g.id)}"><a href="${esc(href)}" tabindex="-1">${img}</a><div class="cb"><h2>${esc(g.title)}</h2><p>${esc(g.desc)}</p>${VIP||g.free?'':'<div class="price">Free sample · unlock full game $1.99</div>'}<div class="row"><a class="btn play" href="${esc(href)}">▶ ${VIP||FORCE_UNLOCKED||g.free?'Play':'Play sample'}</a>${VIP||g.free?'':`<a class="btn unl" href="${esc(UNLOCK_URL)}" target="_blank" rel="noopener">🔓 Unlock $1.99</a>`}<button class="btn gshare" type="button" data-id="${esc(g.id)}" aria-label="Share ${esc(g.title)}${g.free?'':' (free sample link)'}">🔗 Share</button></div></div></div>`}).join('')}
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function checkKey(){const q=new URLSearchParams(location.search),k=q.get('vip');if(k===null)return;
  try{if(crypto&&crypto.subtle&&await sha(k)===VIP_HASH){localStorage.setItem(VK,VIP_HASH);VIP=true;render()}}catch(e){}
@@ -101,7 +101,7 @@ async function share(d){d=d||SH;if(navigator.share){try{await navigator.share(d)
  try{await navigator.clipboard.writeText(d.url);toast();return 'copied'}catch(e){if(legacyCopy(d.url)){toast();return 'copied'}return 'failed'}}
 $('shareBtn').addEventListener('click',()=>share());
 // Per-game Share: ALWAYS the free-sample link (?sample=589), even for Kelly in VIP/full mode
-function gameShareData(g){return{title:g.title,text:`Play a free sample of ${g.title} from Kelly's Arcade!`,url:g.url+'?sample='+SAMPLE_PARAM}}
+function gameShareData(g){if(g.free)return{title:g.title,text:`Play ${g.title}, free, from Kelly's Arcade!`,url:g.url};return{title:g.title,text:`Play a free sample of ${g.title} from Kelly's Arcade!`,url:g.url+'?sample='+SAMPLE_PARAM}}
 function shareGame(id){const g=GAMES.find(x=>x.id===id);if(!g||!g.live)return Promise.resolve('none');return share(gameShareData(g))}
 $('games').addEventListener('click',e=>{const b=e.target.closest('.gshare');if(!b)return;e.preventDefault();shareGame(b.dataset.id)});
 // Install (PWA)
