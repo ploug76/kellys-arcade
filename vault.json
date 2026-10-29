@@ -43,13 +43,17 @@
     "peters-pecker-sword-fight__limbo",
     "Pecker Limbo"
    ]
-  ]
+  ],
+  "gift": "vault1",
+  "paper": "choc"
  },
  {
   "url": "https://ploug76.github.io/taco-strike-80s/",
   "title": "Taco Strike: Totally 80s",
   "cover": "covers/taco-strike-80s.jpg?v=1",
-  "desc": "A walking taco storms the 80s Saturday-morning lands: Rainbow Brite, the Care Bears, She-Ra, G.I. Joe vs Cobra, Endor speeder bikes, the Ewok village, Jabba's Sarlacc pit, an X-wing trench run and the Millennium Falcon. Pick your hero; swipe to move, JUMP and THROW."
+  "desc": "A walking taco storms the 80s Saturday-morning lands: Rainbow Brite, the Care Bears, She-Ra, G.I. Joe vs Cobra, Endor speeder bikes, the Ewok village, Jabba's Sarlacc pit, an X-wing trench run and the Millennium Falcon. Pick your hero; swipe to move, JUMP and THROW.",
+  "gift": "taco-strike-80s",
+  "paper": "kitten"
  },
  {
   "url": "https://ploug76.github.io/pink-taco-twins/",
