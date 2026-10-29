@@ -218,6 +218,17 @@ window.__ka={share,shareGame,gameShareData,SH,GAMES,bundlePrice,get vip(){return
 .kgTn{position:relative;background:#fffbe6;color:#6b3d70;border:2px solid #f1d98a;border-radius:4px;padding:8px 12px;font:700 15px/1.3 Fredoka,"Comic Sans MS",system-ui,sans-serif;transform:rotate(-2.5deg);box-shadow:0 3px 0 rgba(0,0,0,.12)}
 .kgTn:before{content:"";position:absolute;left:50%;top:-9px;width:44px;height:16px;margin-left:-22px;background:rgba(255,143,192,.55);transform:rotate(3deg)}
 .kgV{margin-top:26px}.kgV .kvt{animation:kgPop .6s cubic-bezier(.2,.9,.3,1.3) both;position:relative}
+#kgTok{display:flex;align-items:center;gap:12px;margin:0 auto 6px;padding:8px 20px 8px 10px;border-radius:40px;border:4px solid #fff;background:linear-gradient(135deg,#ff7eb6,#a78bfa);color:#fff;font:700 18px/1.15 Fredoka,system-ui,sans-serif;cursor:pointer;box-shadow:0 5px 0 rgba(90,45,95,.3);animation:kgBob 2s ease-in-out infinite;touch-action:manipulation;text-align:left}#kgTok[hidden]{display:none}
+.kgCoin{position:relative;width:64px;height:64px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff6c2,#ffd23f 45%,#e0a100);border:4px solid #fff0a8;box-shadow:inset 0 0 0 4px #f0b400,0 0 18px #ffe066;overflow:hidden;animation:kgSpinC 3s ease-in-out infinite}
+.kgCoin i{font-style:normal;font-size:30px}.kgCoin:after{content:"";position:absolute;top:-20%;left:-60%;width:40%;height:140%;background:rgba(255,255,255,.75);transform:rotate(25deg);animation:kgShine 2.2s ease-in-out infinite}
+@keyframes kgShine{0%,55%{left:-60%}100%{left:130%}}@keyframes kgSpinC{0%,70%,100%{transform:rotateY(0)}85%{transform:rotateY(180deg)}}
+.kgWheelM{width:min(380px,100%)}.kgWheel{position:relative;width:min(300px,72vw,58vh);margin:6px auto 14px}
+.kgWrot{will-change:transform}.kgWheelS{display:block;width:100%;height:auto;filter:drop-shadow(0 5px 0 rgba(90,45,95,.25))}
+.kgPtr{position:absolute;left:50%;top:-14px;z-index:2;width:0;height:0;margin-left:-15px;border-left:15px solid transparent;border-right:15px solid transparent;border-top:32px solid #e0439a;filter:drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff);transform-origin:50% 0}
+.kgPtr.flap{animation:kgFlap .12s ease-out}@keyframes kgFlap{0%{transform:rotate(0)}40%{transform:rotate(-16deg)}100%{transform:rotate(0)}}
+.kgBig{display:block;font-size:26px;color:#e0439a;margin-bottom:2px}
+.kgM button:disabled{opacity:.6}
+@media (max-height:500px){.kgWheelM{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;width:min(640px,100%);padding:10px 14px}.kgWheelM h3{grid-column:2;margin:0}.kgWheelM .kgWheel{grid-row:1/span 3;grid-column:1;margin:4px;width:min(300px,62vh)}.kgWheelM p{grid-column:2;margin:0}.kgWheelM button{grid-column:2;justify-self:center}}
 #kgConf{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:79}
 #kgQA{position:fixed;left:6px;bottom:6px;z-index:90;background:#222;color:#ffd23f;font:11px monospace;padding:2px 6px;border-radius:6px;opacity:.75;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.kgBox,.kgH .w,.kgHint,.kgHint i{animation:none}}
@@ -226,14 +237,15 @@ window.__ka={share,shareGame,gameShareData,SH,GAMES,bundlePrice,get vip(){return
    Every Volume 2 game lives in GIFTS below (NOT in GAMES), so it never shows on the page, in the
    All-games list or the leaderboards until it is unwrapped.
    - Before Oct 31, 2026 (viewer's local time): wrapped presents only (no title/cover/link). Tap = wiggle + "No peeking!" + countdown.
-   - Oct 31, 2026: Kelly may swipe-open ONE present early (her pick is saved); the rest stay wrapped.
+   - Oct 31, 2026: Kelly gets ONE Birthday Token; she spends it on one prize-wheel spin (8x '1', 2x '2') and may swipe-open that many
+     presents early (kg26_spin = result, saved before the wheel stops; kg26_early = her picks). The rest stay wrapped.
    - Nov 1, 2026 00:00 local and later: swipe across each present to rip the paper off; it becomes a normal card.
    Opened presents are remembered in localStorage (kg26_open / kg26_early).
    TO ADD A VOL 2 GAME: add ONE line to GIFTS, e.g.
      {id:'my-game-vol-2',title:"My Game: Volume 2",desc:'Short blurb',url:'https://ploug76.github.io/my-game-vol-2/',cover:'covers/my-game-vol-2.gif'},
    cover is optional (a cheerful title card is shown if it is empty or fails to load; emoji:'🦒' sets its picture); lb:[['board-id','Label']] adds leaderboard boards;
    paper:'choc'|'kitten'|'giraffe'|'mix' picks the wrapping paper (otherwise it rotates). Do not add Vol 2 covers to sw.js precache.
-   QA only: ?__giftqa=2026-10-30 | 2026-10-31 | 2026-11-01 (optionally T13:45) fakes the date; QA state uses sessionStorage, never Kelly's saved state. */
+   QA only: ?__giftqa=2026-10-30 | 2026-10-31 | 2026-11-01 (optionally T13:45) fakes the date, &__giftspin=1|2 forces the wheel (QA only); QA state uses sessionStorage, never Kelly's saved state. */
 const GIFTS=[
  {id:'kelly-crunch-vol-2',title:'Kelly Crunch Vol. 2: The Great Feast Quest',desc:'Kelly is back! Feed the food chain across 5 painted worlds, beat 5 bosses and save the Rainbow Feast. 230 puzzles too. Free!',url:'https://ploug76.github.io/kelly-crunch-vol-2/',cover:'covers/kelly-crunch-vol-2.gif',paper:'choc'},
  {id:'kelly-crunch-vol-3',title:'Kelly Crunch Vol. 3',desc:'Kelly Crunch goes giraffe! A brand-new Kelly Crunch adventure.',url:'https://ploug76.github.io/kelly-crunch-vol-3/',cover:'',emoji:'🦒',paper:'kitten'},
@@ -258,10 +270,14 @@ let ST;try{ST=QA?sessionStorage:localStorage;ST.getItem('x')}catch(e){ST={getIte
 const K=QA?'kg26qa_':'kg26_';
 const getOpen=()=>{try{const a=JSON.parse(ST.getItem(K+'open')||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}};
 const setOpen=a=>{try{ST.setItem(K+'open',JSON.stringify(a))}catch(e){}};
-const early=()=>ST.getItem(K+'early')||'';
+// Oct 31: one Birthday Token -> one wheel spin -> result N (1 or 2) presents may be opened early.
+const early=()=>{const v=ST.getItem(K+'early')||'';try{const a=JSON.parse(v);if(Array.isArray(a))return a.map(String)}catch(e){}return v?[v]:[]};
+const spinN=()=>{const n=+ST.getItem(K+'spin');return n===1||n===2?n:0};
+let FORCE=0;try{if(QA){const f=+new URLSearchParams(location.search).get('__giftspin');if(f===1||f===2)FORCE=f}}catch(e){}
+const WHEEL=[1,1,2,1,1,1,1,2,1,1]; // 10 slices: 8x '1', 2x '2' (pure random, 20% chance of 2)
 const ids=new Set(GIFTS.map(g=>g.id)),VGIFTS=[];const findG=id=>GIFTS.find(x=>x.id===id)||VGIFTS.find(x=>x.id===id);const idxG=g=>GIFTS.includes(g)?GIFTS.indexOf(g):VGIFTS.indexOf(g);
-function shown(id){const p=phase(),o=getOpen().includes(id);return p=='bday'?o:p=='eve'?(o&&early()===id):false}
-function canRip(id){if(shown(id))return false;const p=phase();return p=='bday'||(p=='eve'&&(!early()||early()===id))}
+function shown(id){const p=phase(),o=getOpen().includes(id);return p=='bday'?o:p=='eve'?(o&&early().includes(id)):false}
+function canRip(id){if(shown(id))return false;const p=phase();if(p=='bday')return true;if(p!='eve')return false;const n=spinN(),e=early();return !!n&&(e.includes(id)||e.length<n)}
 // Leaderboard/registry hooks (read by the leaderboard script below)
 window.__kgHide=id=>(ids.has(id)||/-vol-\d+$/.test(id))&&!shown(id);
 window.__kgLB={R:Object.fromEntries(GIFTS.filter(g=>g.lb&&g.lb.length).map(g=>[g.id,{t:g.title,u:g.url,unit:g.unit||'pts',b:g.lb}])),here:GIFTS.filter(g=>g.lb&&g.lb.length).map(g=>g.id)};
@@ -315,23 +331,23 @@ function renderItem(el,g,i){if(el.querySelector('.kgBox.ripping'))return;const s
  el.classList.toggle('kgOpen',s&&!g.vault);
  if(s){el.innerHTML=cardHTML(g);if(!g.vault)addToGames(g)}else{el.innerHTML=wrapHTML(g,i,r);if(r)bindRip(el.querySelector('.kgBox'),g,el)}fixCovers(el)}
 function fmtLeft(){const ms=Math.max(0,OPEN-now()),d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return{d,h,m}}
-function banner(){const p=phase(),h=$('kgH'),s=$('kgSub'),L=fmtLeft(),tz=$('kgTease');if(tz)tz.hidden=!(window.__ka&&__ka.vip)||getOpen().includes(VAULT_KEY);
+function banner(){const p=phase(),h=$('kgH'),s=$('kgSub'),L=fmtLeft(),tz=$('kgTease'),tk=$('kgTok');if(tk)tk.hidden=!(p=='eve'&&!spinN());if(tz)tz.hidden=!(window.__ka&&__ka.vip)||getOpen().includes(VAULT_KEY);
  if(p=='pre'){h.innerHTML='<span class="w">🎂</span> Birthday surprises coming Nov 1! <span class="w" style="animation-delay:-1.2s">🎁</span>';s.innerHTML='Kelly, these presents are just for you. They open on your birthday in <b>'+L.d+'d '+L.h+'h '+L.m+'m</b>. No peeking! 🙈'}
- else if(p=='eve'){h.innerHTML='<span class="w">🎈</span> It\'s almost your birthday! <span class="w" style="animation-delay:-1.2s">🎈</span>';
-  s.innerHTML=early()?'You opened your early present! 💖 The rest open on your birthday in <b>'+L.h+'h '+L.m+'m</b>.':'You may open <b>ONE</b> present early 🎁 Pick any one and swipe across it to rip it open!'}
+ else if(p=='eve'){h.innerHTML='<span class="w">🎈</span> It\'s almost your birthday! <span class="w" style="animation-delay:-1.2s">🎈</span>';const n=spinN(),e=early(),op=e.filter(x=>getOpen().includes(x)).length,need=n-e.length;
+  s.innerHTML=!n?'You got a <b>Birthday Token</b>! 🪙 Spend it to spin the wheel and find out how many presents you may open tonight!':(op>=n?'You opened your early present'+(n>1?'s':'')+'! 💖 The rest open on your birthday in <b>'+L.h+'h '+L.m+'m</b>.':'The wheel says you may open <b>'+n+'</b> present'+(n>1?'s':'')+' early 🎁 '+(need>0?'Pick '+need+' and swipe across '+(need>1?'them':'it')+' to rip '+(need>1?'them':'it')+' open!':'Keep swiping!'))}
  else{const left=GIFTS.filter(g=>canRip(g.id)).length;h.innerHTML='<span class="w">🎉</span> Happy Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎂</span>';
   s.innerHTML=left?'Swipe across each present to rip it open! <b>'+left+'</b> to go 🎁':'All your presents are open. Have the best birthday ever! 💖🐱🦒🍫'}}
 let lastPhase='';function renderAll(){const grid=$('kgGrid');if(!grid)return;lastPhase=phase();GIFTS.forEach((g,i)=>{let el=grid.querySelector('.kgItem[data-id="'+CSS.escape(g.id)+'"]');if(!el){el=document.createElement('div');el.className='kgItem';el.dataset.id=g.id;grid.appendChild(el)}renderItem(el,g,i)});banner()}
 // ---- locked tap: wiggle + No peeking ----
 let msgT=0;function noPeek(box){box.classList.remove('wig');void box.offsetWidth;box.classList.add('wig');jingle();const L=fmtLeft(),p=phase();
- const m=$('kgMsg');m.innerHTML='<div class="kgM" role="alertdialog" aria-label="No peeking"><div class="e">🙈</div><h3>No peeking!</h3><p>'+(p=='eve'&&early()?'One early present is all! 😉<br>':'')+'Opens on your birthday, <b>Nov 1</b> 🎂</p><div class="kgCd"><div><b>'+L.d+'</b>days</div><div><b>'+L.h+'</b>hours</div><div><b>'+L.m+'</b>min</div></div><button type="button" id="kgOk">OK! 💕</button></div>';
+ const m=$('kgMsg');m.innerHTML='<div class="kgM" role="alertdialog" aria-label="No peeking"><div class="e">🙈</div><h3>No peeking!</h3><p>'+(p=='eve'&&!spinN()?'Spend your Birthday Token first! 🪙<br>':p=='eve'?'Your early present'+(spinN()>1?'s are':' is')+' all picked! 😉<br>':'')+'Opens on your birthday, <b>Nov 1</b> 🎂</p><div class="kgCd"><div><b>'+L.d+'</b>days</div><div><b>'+L.h+'</b>hours</div><div><b>'+L.m+'</b>min</div></div><button type="button" id="kgOk">OK! 💕</button></div>';
  m.classList.add('on');$('kgOk').focus({preventScroll:true});clearTimeout(msgT);msgT=setTimeout(closeMsg,6000)}
-function closeMsg(){$('kgMsg').classList.remove('on')}
+function closeMsg(){if(typeof spinning!=='undefined'&&spinning)return;$('kgMsg').classList.remove('on')}
 // ---- swipe-to-rip ----
 const COLS=6,ROWS=5;
 function bindRip(box,g,item){let st=null,pcs=null,torn=0,down=null,lastP=null,vel={x:1,y:0},done=false;
  function begin(){if(st)return true;if(!canRip(g.id))return false;
-  if(phase()=='eve'&&!early()){try{ST.setItem(K+'early',g.id)}catch(e){};document.querySelectorAll('.kgItem').forEach(el=>{if(el!==item){const gg=el.__g||findG(el.dataset.id);if(gg)renderItem(el,gg,idxG(gg))}});banner()}
+  if(phase()=='eve'&&!early().includes(g.id)){const e=early();e.push(g.id);try{ST.setItem(K+'early',JSON.stringify(e))}catch(_){};document.querySelectorAll('.kgItem').forEach(el=>{if(el!==item){const gg=el.__g||findG(el.dataset.id);if(gg)renderItem(el,gg,idxG(gg))}});banner()}
   st=1;box.classList.add('ripping','torn');const kin=box.querySelector('.kgIn');if(kin&&!kin.firstChild){kin.innerHTML=g.cover?'<img src="'+esc(g.cover)+'" alt="" data-kgc="1">':titleCard(g);fixCovers(item)}ac();musicStart();popSnd();
   const W=box.clientWidth,H=box.clientHeight,S=Math.max(W,H),cw=W/COLS,ch=H/ROWS,ov=Math.max(cw,ch)*.14,url=box.querySelector('.kgPaper').style.backgroundImage;
   const wrap=box.querySelector('.kgPcs');pcs=[];
@@ -368,16 +384,45 @@ let gpOn=false,gpT=0;function gpLoop(t){const pads=(navigator.getGamepads&&navig
  if(held&&t-gpT>85){gpT=t;const a=document.activeElement;const b=(a&&a.classList&&a.classList.contains('kgBox')&&a.__kgAuto)?a:[...document.querySelectorAll('.kgBox.rip')].find(x=>x.__kgAuto&&x.isConnected);if(b){b.__kgAuto();if(b.isConnected&&document.activeElement!==b)b.focus({preventScroll:false})}}
  if([...pads].some(Boolean))requestAnimationFrame(gpLoop);else gpOn=false}
 addEventListener('gamepadconnected',()=>{if(!gpOn){gpOn=true;requestAnimationFrame(gpLoop)}});
+// ---- Birthday Token prize wheel (Oct 31) ----
+function tick(){if(!AC)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.setValueAtTime(1900,t);o.frequency.exponentialRampToValueAtTime(700,t+.03);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.04);o.connect(g).connect(MG);o.start(t);o.stop(t+.05)}
+function coinSnd(){if(!ac())return;const t=AC.currentTime;[[88,0],[95,.09]].forEach(([m,d])=>tine(m,t+d,.18,.9))}
+function tada(n){if(!ac())return;const t=AC.currentTime+.05;(n>1?[72,76,79,84,88,91]:[72,76,79,84]).forEach((m,i)=>tine(m,t+i*.09,.16,1.2));[72,79,84].forEach(m=>tine(m,t+.6,.1,2.2))}
+function wheelSVG(){const C=['#ff7eb6','#64d6b4','#ffd23f','#a78bfa','#ff9a52'],E=['🍫','🐱','🦒'],R=150;let p='',ix=0;
+ WHEEL.forEach((v,i)=>{const a0=(i*36-90)*Math.PI/180,a1=((i+1)*36-90)*Math.PI/180,x0=R+R*Math.cos(a0),y0=R+R*Math.sin(a0),x1=R+R*Math.cos(a1),y1=R+R*Math.sin(a1),mid=(i*36+18);
+  const fill=v==2?'url(#kgGold)':(i%4==1?'#7b4a2a':C[(ix++)%C.length]);
+  p+='<path d="M'+R+' '+R+'L'+x0.toFixed(1)+' '+y0.toFixed(1)+'A'+R+' '+R+' 0 0 1 '+x1.toFixed(1)+' '+y1.toFixed(1)+'Z" fill="'+fill+'" stroke="#fff" stroke-width="3"/>'+
+   '<g transform="rotate('+mid+' '+R+' '+R+')"><text x="'+R+'" y="46" text-anchor="middle" font-size="'+(v==2?40:34)+'" font-weight="700" font-family="Fredoka,system-ui,sans-serif" fill="#fff" stroke="'+(v==2?'#b7791f':'rgba(90,45,95,.55)')+'" stroke-width="2.5" paint-order="stroke">'+v+'</text><text x="'+R+'" y="86" text-anchor="middle" font-size="24">'+(v==2?'✨':E[i%3])+'</text></g>'});
+ return '<svg viewBox="-8 -8 316 316" class="kgWheelS" aria-hidden="true"><defs><radialGradient id="kgGold" cx="50%" cy="30%" r="80%"><stop offset="0" stop-color="#fff6c2"/><stop offset=".5" stop-color="#ffd23f"/><stop offset="1" stop-color="#e0a100"/></radialGradient></defs><circle cx="150" cy="150" r="157" fill="#ff8fc0"/>'+p+'<circle cx="150" cy="150" r="30" fill="#fff" stroke="#ff8fc0" stroke-width="5"/><text x="150" y="161" text-anchor="middle" font-size="30">🎂</text>'+
+  [...Array(10)].map((_,i)=>{const a=(i*36-90)*Math.PI/180;return '<circle cx="'+(150+150*Math.cos(a)).toFixed(1)+'" cy="'+(150+150*Math.sin(a)).toFixed(1)+'" r="5" fill="#fff"/>'}).join('')+'</svg>'}
+let spinning=false;
+function openWheel(){ac();coinSnd();const m=$('kgMsg'),n=spinN();clearTimeout(msgT);
+ m.innerHTML='<div class="kgM kgWheelM" role="dialog" aria-label="Birthday prize wheel"><h3>🪙 Birthday Token Wheel</h3><p id="kgWtxt">'+(n?'':'One token, one spin! How many presents can you open tonight?')+'</p><div class="kgWheel"><div class="kgPtr" id="kgPtr"></div><div class="kgWrot" id="kgWrot">'+wheelSVG()+'</div></div><button type="button" id="kgSpin">'+(n?'Yay! 🎁':'🪙 SPIN!')+'</button></div>';
+ m.classList.add('on');if(n)showResult(n,true);
+ $('kgSpin').addEventListener('click',()=>{if(spinning)return;if(spinN()){closeMsg();return}spin()})}
+function spin(){ac();let idx=Math.floor(Math.random()*WHEEL.length);if(FORCE){const c=WHEEL.map((v,i)=>v===FORCE?i:-1).filter(i=>i>=0);idx=c[Math.floor(Math.random()*c.length)]}
+ const n=WHEEL[idx];try{ST.setItem(K+'spin',String(n))}catch(e){} // saved BEFORE the animation: refreshing can't respin
+ spinning=true;const b=$('kgSpin');b.disabled=true;b.textContent='Spinning…';$('kgWtxt').textContent='Round and round it goes… 🐱🦒🍫';const tk=$('kgTok');if(tk)tk.hidden=true;
+ const rot=$('kgWrot'),ptr=$('kgPtr'),target=360*7-(idx*36+18)+(Math.random()*20-10),D=matchMedia('(prefers-reduced-motion: reduce)').matches?1500:6500,t0=performance.now();let last=-1;
+ (function f(t){const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,4),a=target*e;rot.style.transform='rotate('+a+'deg)';const sl=Math.floor((a+18)/36);
+  if(sl!==last){last=sl;tick();ptr.classList.remove('flap');void ptr.offsetWidth;ptr.classList.add('flap')}
+  if(k<1)requestAnimationFrame(f);else{spinning=false;showResult(n)}})(t0)}
+function showResult(n,again){const t=$('kgWtxt'),b=$('kgSpin');if(!t)return;
+ if(again){const i=WHEEL.indexOf(n);$('kgWrot').style.transform='rotate('+(360-(i*36+18))+'deg)'}
+ t.innerHTML=(n>1?'<b class="kgBig">✨ 2 presents! ✨</b>WOW, lucky you! You may open <b>2</b> presents tonight!':'<b class="kgBig">1 present! 🎁</b>You may open <b>1</b> present tonight!')+(again?'':'<br>Pick and swipe to rip '+(n>1?'them':'it')+' open!');
+ b.disabled=false;b.textContent='Pick my present'+(n>1?'s':'')+'! 🎁';if(!again){tada(n);const r=$('kgWrot').getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2)}
+ document.querySelectorAll('.kgItem').forEach(el=>{const g=el.__g||findG(el.dataset.id);if(g)renderItem(el,g,idxG(g))});banner()}
 // ---- mount ----
 function mount(){if($('kgifts'))return;const main=document.querySelector('main#games');if(!main)return;const s=document.createElement('section');s.id='kgifts';s.setAttribute('aria-label',"Kelly's birthday presents");
- s.innerHTML='<div class="kgPanel"><button id="kgMute" type="button"></button><h2 class="kgH" id="kgH"></h2><p class="kgSub" id="kgSub" aria-live="polite"></p><div class="kgGrid" id="kgGrid"></div><div class="kgTease" id="kgTease" hidden><span class="kgTk" aria-hidden="true">🐱</span><span class="kgTn">Psst... one more surprise is hiding in your Vault 🔐🎁</span></div></div>';
+ s.innerHTML='<div class="kgPanel"><button id="kgMute" type="button"></button><h2 class="kgH" id="kgH"></h2><p class="kgSub" id="kgSub" aria-live="polite"></p><button type="button" class="kgTok" id="kgTok" hidden aria-label="Spend your Birthday Token: spin the wheel"><span class="kgCoin" aria-hidden="true"><i>🎂</i></span><span class="kgTokT">Spend my<br>Birthday Token!</span></button><div class="kgGrid" id="kgGrid"></div><div class="kgTease" id="kgTease" hidden><span class="kgTk" aria-hidden="true">🐱</span><span class="kgTn">Psst... one more surprise is hiding in your Vault 🔐🎁</span></div></div>';
  main.parentNode.insertBefore(s,main);const m=document.createElement('div');m.id='kgMsg';document.body.appendChild(m);
  m.addEventListener('click',e=>{if(e.target===m||e.target.id==='kgOk')closeMsg()});addEventListener('keydown',e=>{if(e.key==='Escape')closeMsg()});
  $('kgMute').addEventListener('click',()=>{setMute(!muted)});setMute(muted);
  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.kgBox');if(b&&!b.classList.contains('rip'))noPeek(b)});
  document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('.kgBox');if(b&&!b.classList.contains('rip')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();noPeek(b)}});
  if(QA){const q=document.createElement('div');q.id='kgQA';q.textContent='QA date '+new Date(now()).toLocaleString();document.body.appendChild(q)}
- renderAll();setInterval(()=>{if(phase()!==lastPhase)renderAll();else banner()},20000)}
+ $('kgTok').addEventListener('click',openWheel);
+ renderAll();if(phase()=='eve'&&!spinN())setTimeout(()=>{const c=$('kgTok').getBoundingClientRect();if(c.width)confetti(c.left+c.width/2,c.top+c.height/2)},700);setInterval(()=>{if(phase()!==lastPhase)renderAll();else banner()},20000)}
 // Vault gift(s): vault.json entries with "gift":"<key>" (key is opaque, never the game name) are wrapped inside the Vault only.
 const VAULT_KEY='vault1';
 window.__kgVault={mount(box,VG,SRC){box.querySelectorAll('.kgV[data-vg]').forEach(el=>{const v=VG[+el.dataset.vg];if(!v)return;let g=VGIFTS.find(x=>x.id===String(v.gift));
