@@ -281,7 +281,15 @@ const setOpen=a=>{try{ST.setItem(K+'open',JSON.stringify(a))}catch(e){}};
 const early=()=>{const v=ST.getItem(K+'picks')||'';try{const a=JSON.parse(v);if(Array.isArray(a))return a.map(String)}catch(e){}return v?[v]:[]};
 const coinN=d=>{const n=+ST.getItem(K+'coin_'+d);return n===1||n===2?n:0};
 const spinToday=()=>coinN(today());
-const spinN=()=>COIN_DAYS.reduce((a,d)=>a+coinN(d),0);
+// BONUS COINS (Peter, Oct 30 2:48 PM PT: "Send Kelly two new birthday coins"): granted ONCE per device (flag bonus_grant_v1), stacked on the day coins.
+// K+'bonus' = coins granted, K+'bspins' = JSON results of bonus spins. Never touches open/picks, so opened presents stay open.
+try{if(!ST.getItem(K+'bonus_grant_v1')){ST.setItem(K+'bonus',String((+ST.getItem(K+'bonus')||0)+2));ST.setItem(K+'bonus_grant_v1','1')}}catch(e){}
+const bSpins=()=>{try{const a=JSON.parse(ST.getItem(K+'bspins')||'[]');return Array.isArray(a)?a.filter(v=>v===1||v===2):[]}catch(e){return[]}};
+const bonusLeft=()=>Math.max(0,(+ST.getItem(K+'bonus')||0)-bSpins().length);
+const coinsLeft=()=>(COIN_DAYS.includes(today())&&!coinN(today())?1:0)+bonusLeft();
+const lastSpin=()=>{const b=bSpins();return b.length?b[b.length-1]:coinN(today())};
+const numW=n=>['zero','one','two','three','four','five'][n]||String(n);
+const spinN=()=>COIN_DAYS.reduce((a,d)=>a+coinN(d),0)+bSpins().reduce((a,v)=>a+v,0);
 let FORCE=0;try{if(QA){const f=+new URLSearchParams(location.search).get('__giftspin');if(f===1||f===2)FORCE=f}}catch(e){}
 const WHEEL=[1,1,2,1,1,1,1,2,1,1]; // 10 slices: 8x '1', 2x '2' (pure random, 20% chance of 2)
 const ids=new Set(GIFTS.map(g=>g.id)),VGIFTS=[];const findG=id=>GIFTS.find(x=>x.id===id)||VGIFTS.find(x=>x.id===id);const idxG=g=>GIFTS.includes(g)?GIFTS.indexOf(g):VGIFTS.indexOf(g);
@@ -340,18 +348,18 @@ function renderItem(el,g,i){if(el.querySelector('.kgBox.ripping'))return;const s
  el.classList.toggle('kgOpen',s&&!g.vault);
  if(s){el.innerHTML=cardHTML(g);if(!g.vault)addToGames(g)}else{el.innerHTML=wrapHTML(g,i,r);if(r)bindRip(el.querySelector('.kgBox'),g,el)}fixCovers(el)}
 function fmtLeft(){const ms=Math.max(0,OPEN-now()),d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return{d,h,m}}
-function banner(){const p=phase(),h=$('kgH'),s=$('kgSub'),L=fmtLeft(),tz=$('kgTease'),tk=$('kgTok');if(tk)tk.hidden=!(p=='eve'&&!spinToday());if(tz)tz.hidden=!(window.__ka&&__ka.vip)||getOpen().includes(VAULT_KEY);
+function banner(){const p=phase(),h=$('kgH'),s=$('kgSub'),L=fmtLeft(),tz=$('kgTease'),tk=$('kgTok');const cl=coinsLeft();if(tk){tk.hidden=!(p=='eve'&&cl);const tt=tk.querySelector('.kgTokT');if(tt)tt.innerHTML=cl>1?'Spend my coins!<br>🪙 Coins: '+cl:'Spend my<br>Pre-Birthday Coin!'}if(tz)tz.hidden=!(window.__ka&&__ka.vip)||getOpen().includes(VAULT_KEY);
  if(p=='pre'){h.innerHTML='<span class="w">🎂</span> Birthday surprises coming Nov 1! <span class="w" style="animation-delay:-1.2s">🎁</span>';s.innerHTML='Kelly, these presents are just for you. They open on your birthday in <b>'+L.d+'d '+L.h+'h '+L.m+'m</b>. No peeking! 🙈'}
  else if(p=='eve'){h.innerHTML='<span class="w">🎈</span> It\'s almost your birthday! <span class="w" style="animation-delay:-1.2s">🎈</span>';const n=spinN(),e=early(),op=e.filter(x=>getOpen().includes(x)).length,need=n-e.length;
-  const st=spinToday(),nx=today()==='1030'?'Another coin arrives tomorrow 🪙, and the rest open on your birthday!':'The rest open on your birthday in <b>'+L.h+'h '+L.m+'m</b>.';
+  const st=!cl,nx=today()==='1030'?'Another coin arrives tomorrow 🪙, and the rest open on your birthday!':'The rest open on your birthday in <b>'+L.h+'h '+L.m+'m</b>.';
   h.innerHTML='<span class="w">🎈</span> Happy Pre-Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎈</span>';
-  s.innerHTML=!st?'You\'ve been awarded a coin for a spin in our <b>Pre-Birthday Gift Opening Ceremony</b>! 🪙 Spend it to spin the wheel and find out how many presents you may open today!':(op>=n?'You opened your Pre-Birthday present'+(n>1?'s':'')+'! 💖 '+nx:'You can open <b>'+(n-op)+'</b> present'+(n-op>1?'s':'')+' today! 🎁 '+(need>0?'Pick '+need+' and swipe across '+(need>1?'them':'it')+' to rip '+(need>1?'them':'it')+' open!':'Keep swiping!'))}
+  s.innerHTML=!st?(cl>1?'You\'ve been awarded <b>'+numW(cl)+' coins</b> for spins in our <b>Pre-Birthday Gift Opening Ceremony</b>! 🪙 Coins: <b>'+cl+'</b>. Spend them to spin the wheel and find out how many more presents you may open!':'You\'ve been awarded a coin for a spin in our <b>Pre-Birthday Gift Opening Ceremony</b>! 🪙 Spend it to spin the wheel and find out how many presents you may open today!')+(n-op>0?' You can still open <b>'+(n-op)+'</b> now 🎁':''):(op>=n?'You opened your Pre-Birthday present'+(n>1?'s':'')+'! 💖 '+nx:'You can open <b>'+(n-op)+'</b> present'+(n-op>1?'s':'')+' today! 🎁 '+(need>0?'Pick '+need+' and swipe across '+(need>1?'them':'it')+' to rip '+(need>1?'them':'it')+' open!':'Keep swiping!'))}
  else{const left=GIFTS.filter(g=>canRip(g.id)).length;h.innerHTML='<span class="w">🎉</span> Happy Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎂</span>';
   s.innerHTML=left?'Swipe across each present to rip it open! <b>'+left+'</b> to go 🎁':'All your presents are open. Have the best birthday ever! 💖🐱🦒🍫'}}
 let lastPhase='';function renderAll(){const grid=$('kgGrid');if(!grid)return;lastPhase=phase();GIFTS.forEach((g,i)=>{let el=grid.querySelector('.kgItem[data-id="'+CSS.escape(g.id)+'"]');if(!el){el=document.createElement('div');el.className='kgItem';el.dataset.id=g.id;grid.appendChild(el)}renderItem(el,g,i)});banner()}
 // ---- locked tap: wiggle + No peeking ----
 let msgT=0;function noPeek(box){box.classList.remove('wig');void box.offsetWidth;box.classList.add('wig');jingle();const L=fmtLeft(),p=phase();
- const m=$('kgMsg');m.innerHTML='<div class="kgM" role="alertdialog" aria-label="No peeking"><div class="e">🙈</div><h3>No peeking!</h3><p>'+(p=='eve'&&!spinToday()?'Spend your coin first! 🪙<br>':p=='eve'?'Today\'s present'+(spinN()>1?'s are':' is')+' all picked! 😉<br>':'')+'Opens on your birthday, <b>Nov 1</b> 🎂</p><div class="kgCd"><div><b>'+L.d+'</b>days</div><div><b>'+L.h+'</b>hours</div><div><b>'+L.m+'</b>min</div></div><button type="button" id="kgOk">OK! 💕</button></div>';
+ const m=$('kgMsg');m.innerHTML='<div class="kgM" role="alertdialog" aria-label="No peeking"><div class="e">🙈</div><h3>No peeking!</h3><p>'+(p=='eve'&&coinsLeft()?'Spend your coin'+(coinsLeft()>1?'s':'')+' first! 🪙<br>':p=='eve'?'Today\'s present'+(spinN()>1?'s are':' is')+' all picked! 😉<br>':'')+'Opens on your birthday, <b>Nov 1</b> 🎂</p><div class="kgCd"><div><b>'+L.d+'</b>days</div><div><b>'+L.h+'</b>hours</div><div><b>'+L.m+'</b>min</div></div><button type="button" id="kgOk">OK! 💕</button></div>';
  m.classList.add('on');$('kgOk').focus({preventScroll:true});clearTimeout(msgT);msgT=setTimeout(closeMsg,6000)}
 function closeMsg(){if(typeof spinning!=='undefined'&&spinning)return;$('kgMsg').classList.remove('on')}
 // ---- swipe-to-rip ----
@@ -407,15 +415,15 @@ function wheelSVG(){const C=['#ff7eb6','#64d6b4','#ffd23f','#a78bfa','#ff9a52'],
  return '<svg viewBox="-8 -8 316 316" class="kgWheelS" aria-hidden="true"><defs><radialGradient id="kgGold" cx="50%" cy="30%" r="80%"><stop offset="0" stop-color="#fff6c2"/><stop offset=".5" stop-color="#ffd23f"/><stop offset="1" stop-color="#e0a100"/></radialGradient></defs><circle cx="150" cy="150" r="157" fill="#ff8fc0"/>'+p+'<circle cx="150" cy="150" r="30" fill="#fff" stroke="#ff8fc0" stroke-width="5"/><text x="150" y="161" text-anchor="middle" font-size="30">🎂</text>'+
   [...Array(10)].map((_,i)=>{const a=(i*36-90)*Math.PI/180;return '<circle cx="'+(150+150*Math.cos(a)).toFixed(1)+'" cy="'+(150+150*Math.sin(a)).toFixed(1)+'" r="5" fill="#fff"/>'}).join('')+'</svg>'}
 let spinning=false;
-function coinMsg(){const m=$('kgMsg');if(!m||spinning)return;const d2=today()==='1031';clearTimeout(msgT);
- m.innerHTML='<div class="kgM kgCoinM" role="alertdialog" aria-label="Pre-Birthday coin"><div class="e">🪙</div><h3>Happy Pre-Birthday!'+(d2?' (Day 2)':'')+'</h3><p style="font-size:1.15em;line-height:1.4">You\'ve been awarded a coin for a spin in our <b>Pre-Birthday Gift Opening Ceremony</b>!</p><button type="button" id="kgCoinGo">🪙 Spin the wheel!</button></div>';
+function coinMsg(){const m=$('kgMsg');if(!m||spinning)return;const d2=today()==='1031',cl=coinsLeft();clearTimeout(msgT);
+ m.innerHTML='<div class="kgM kgCoinM" role="alertdialog" aria-label="Pre-Birthday coin"><div class="e">🪙</div><h3>Happy Pre-Birthday!'+(d2?' (Day 2)':'')+'</h3><p style="font-size:1.15em;line-height:1.4">'+(cl>1?'You\'ve been awarded <b>'+numW(cl)+' coins</b> for spins in our <b>Pre-Birthday Gift Opening Ceremony</b>!</p><p id="kgCoinN" style="font-size:1.3em;font-weight:700;margin:4px 0">🪙 Coins: '+cl+'</p>':'You\'ve been awarded a coin for a spin in our <b>Pre-Birthday Gift Opening Ceremony</b>!</p>')+'<button type="button" id="kgCoinGo">🪙 Spin the wheel!</button></div>';
  m.classList.add('on');$('kgCoinGo').addEventListener('click',e=>{e.stopPropagation();openWheel()})}
-function openWheel(){ac();coinSnd();const m=$('kgMsg'),n=spinToday();clearTimeout(msgT);
- m.innerHTML='<div class="kgM kgWheelM" role="dialog" aria-label="Birthday prize wheel"><h3>🪙 Pre-Birthday Gift Wheel</h3><p id="kgWtxt">'+(n?'':'One coin, one spin! How many presents can you open today?')+'</p><div class="kgWheel"><div class="kgPtr" id="kgPtr"></div><div class="kgWrot" id="kgWrot">'+wheelSVG()+'</div></div><button type="button" id="kgSpin">'+(n?'Yay! 🎁':'🪙 SPIN!')+'</button></div>';
+function openWheel(){ac();coinSnd();const m=$('kgMsg'),cl=coinsLeft(),n=cl?0:lastSpin();clearTimeout(msgT);
+ m.innerHTML='<div class="kgM kgWheelM" role="dialog" aria-label="Birthday prize wheel"><h3>🪙 Pre-Birthday Gift Wheel</h3><p id="kgWtxt">'+(n?'':'One coin, one spin! How many presents can you open?'+(cl>1?' 🪙 Coins: '+cl:''))+'</p><div class="kgWheel"><div class="kgPtr" id="kgPtr"></div><div class="kgWrot" id="kgWrot">'+wheelSVG()+'</div></div><button type="button" id="kgSpin">'+(n?'Yay! 🎁':'🪙 SPIN!')+'</button></div>';
  m.classList.add('on');if(n)showResult(n,true);
- $('kgSpin').addEventListener('click',()=>{if(spinning)return;if(spinToday()){closeMsg();return}spin()})}
+ $('kgSpin').addEventListener('click',()=>{if(spinning)return;if(!coinsLeft()){closeMsg();return}spin()})}
 function spin(){ac();let idx=Math.floor(Math.random()*WHEEL.length);if(FORCE){const c=WHEEL.map((v,i)=>v===FORCE?i:-1).filter(i=>i>=0);idx=c[Math.floor(Math.random()*c.length)]}
- const n=WHEEL[idx];try{ST.setItem(K+'coin_'+today(),String(n))}catch(e){} // saved BEFORE the animation: refreshing can't respin
+ const n=WHEEL[idx];try{if(COIN_DAYS.includes(today())&&!coinN(today()))ST.setItem(K+'coin_'+today(),String(n));else{const b=bSpins();b.push(n);ST.setItem(K+'bspins',JSON.stringify(b))}}catch(e){} // saved BEFORE the animation: refreshing can't respin
  spinning=true;const b=$('kgSpin');b.disabled=true;b.textContent='Spinning…';$('kgWtxt').textContent='Round and round it goes… 🐱🦒🍫';const tk=$('kgTok');if(tk)tk.hidden=true;
  const rot=$('kgWrot'),ptr=$('kgPtr'),target=360*7-(idx*36+18)+(Math.random()*20-10),D=matchMedia('(prefers-reduced-motion: reduce)').matches?1500:6500,t0=performance.now();let last=-1;
  (function f(t){const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,4),a=target*e;rot.style.transform='rotate('+a+'deg)';const sl=Math.floor((a+18)/36);
@@ -424,7 +432,7 @@ function spin(){ac();let idx=Math.floor(Math.random()*WHEEL.length);if(FORCE){co
 function showResult(n,again){const t=$('kgWtxt'),b=$('kgSpin');if(!t)return;
  if(again){const i=WHEEL.indexOf(n);$('kgWrot').style.transform='rotate('+(360-(i*36+18))+'deg)'}
  t.innerHTML=(n>1?'<b class="kgBig">✨ 2 presents! ✨</b>WOW, lucky you! You may open <b>2</b> presents today!':'<b class="kgBig">1 present! 🎁</b>You may open <b>1</b> present today!')+(again?'':'<br>Pick and swipe to rip '+(n>1?'them':'it')+' open!');
- b.disabled=false;b.textContent='Pick my present'+(n>1?'s':'')+'! 🎁';if(!again){tada(n);const r=$('kgWrot').getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2)}
+ const cl=coinsLeft();b.disabled=false;b.textContent=cl?'🪙 Spin again! (Coins: '+cl+')':'Pick my present'+(n>1?'s':'')+'! 🎁';if(cl&&!again)t.innerHTML+='<br>You have <b>'+cl+'</b> more coin'+(cl>1?'s':'')+'!';if(!again){tada(n);const r=$('kgWrot').getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2)}
  document.querySelectorAll('.kgItem').forEach(el=>{const g=el.__g||findG(el.dataset.id);if(g)renderItem(el,g,idxG(g))});banner()}
 // ---- mount ----
 function mount(){if($('kgifts'))return;const main=document.querySelector('main#games');if(!main)return;const s=document.createElement('section');s.id='kgifts';s.setAttribute('aria-label',"Kelly's birthday presents");
@@ -436,7 +444,7 @@ function mount(){if($('kgifts'))return;const main=document.querySelector('main#g
  document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('.kgBox');if(b&&!b.classList.contains('rip')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();noPeek(b)}});
  if(QA){const q=document.createElement('div');q.id='kgQA';q.textContent='QA date '+new Date(now()).toLocaleString();document.body.appendChild(q)}
  $('kgTok').addEventListener('click',openWheel);
- renderAll();if(phase()=='eve'&&!spinToday())setTimeout(()=>{coinMsg();const c=$('kgTok').getBoundingClientRect();if(c.width)confetti(c.left+c.width/2,c.top+c.height/2)},700);setInterval(()=>{if(phase()!==lastPhase)renderAll();else banner()},20000)}
+ renderAll();if(phase()=='eve'&&coinsLeft())setTimeout(()=>{coinMsg();const c=$('kgTok').getBoundingClientRect();if(c.width)confetti(c.left+c.width/2,c.top+c.height/2)},700);setInterval(()=>{if(phase()!==lastPhase)renderAll();else banner()},20000)}
 // Vault gift(s): vault.json entries with "gift":"<key>" (key is opaque, never the game name) are wrapped inside the Vault only.
 const VAULT_KEY='vault1';
 window.__kgVault={mount(box,VG,SRC){box.querySelectorAll('.kgV[data-vg]').forEach(el=>{const v=VG[+el.dataset.vg];if(!v)return;let g=VGIFTS.find(x=>x.id===String(v.gift));
