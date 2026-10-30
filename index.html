@@ -260,7 +260,7 @@ const GIFTS=[
  {id:'petes-pain-vol-2',title:"Pete's Pain 2: Extreme Makeover",desc:"Pete is back for more bumps and bruises! Launch him off a slingshot, strike silly poses mid-air and smash through 4 stages and 9 crazy modes. Free!",url:'https://ploug76.github.io/petes-pain-vol-2/',cover:'covers/petes-pain-vol-2.gif',paper:'choc'},
 ];
 (()=>{
-const EARLY=new Date(2026,9,31).getTime(),OPEN=new Date(2026,10,1).getTime();
+const EARLY=new Date(2026,9,31).getTime(),OPEN=Date.UTC(2026,10,1,7); // countdown target: Nov 1 00:00 PT (PDT, UTC-7) on any device
 const PAPERS=['choc','kitten','giraffe','mix'],RIB={choc:['#2fb5a0','#7fe3d2'],kitten:['#ff5fa0','#ffb3d1'],giraffe:['#8b5cf6','#c4b0ff'],mix:['#ffb703','#ffe08a']};
 const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // ---- clock (+ hidden QA hook) ----
