@@ -270,7 +270,9 @@ const now=()=>Date.now()+off;
 // Pre-birthday coin days are computed in Pacific Time (America/Los_Angeles), not UTC/device zone.
 const ptKey=()=>{try{const f=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(now()));const o={};f.forEach(x=>o[x.type]=x.value);return o.year+o.month+o.day}catch(e){const d=new Date(now());return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')}};
 const COIN_DAYS=['1030','1031'];const today=()=>ptKey().slice(4);
-const phase=()=>{const k=ptKey();return k<'20261030'?'pre':k<'20261101'?'eve':'bday'};
+// EARLY UNLOCK (Peter, Oct 31 9:14 PM PT): every present opens from Oct 31 PT on, no coins/spins needed (same as the Nov 1 unlock). Opened presents stay opened.
+const UNLOCK_KEY='20261031';const earlyUnlock=()=>{const k=ptKey();return k>=UNLOCK_KEY&&k<'20261101'};
+const phase=()=>{const k=ptKey();return k<'20261030'?'pre':k<UNLOCK_KEY?'eve':'bday'};
 let ST;try{ST=QA?sessionStorage:localStorage;ST.getItem('x')}catch(e){ST={getItem(){return null},setItem(){}}}
 const K=QA?'kg26qa_':'kg26_';
 // ONE-TIME reset (Oct 30 12:33 AM PT: Peter tested the live Day-1 coin). Clears Day-1 spin/picks/opened once per device, then never again. Never touches pa26demo_*.
@@ -354,8 +356,8 @@ function banner(){const p=phase(),h=$('kgH'),s=$('kgSub'),L=fmtLeft(),tz=$('kgTe
   const st=!cl,nx=today()==='1030'?'Another coin arrives tomorrow 🪙, and the rest open on your birthday!':'The rest open on your birthday in <b>'+L.h+'h '+L.m+'m</b>.';
   h.innerHTML='<span class="w">🎈</span> Happy Pre-Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎈</span>';
   s.innerHTML=!st?(cl>1?'You\'ve been awarded <b>'+numW(cl)+' coins</b> for spins in our <b>Pre-Birthday Gift Opening Ceremony</b>! 🪙 Coins: <b>'+cl+'</b>. Spend them to spin the wheel and find out how many more presents you may open!':'You\'ve been awarded a coin for a spin in our <b>Pre-Birthday Gift Opening Ceremony</b>! 🪙 Spend it to spin the wheel and find out how many presents you may open today!')+(n-op>0?' You can still open <b>'+(n-op)+'</b> now 🎁':''):(op>=n?'You opened your Pre-Birthday present'+(n>1?'s':'')+'! 💖 '+nx:'You can open <b>'+(n-op)+'</b> present'+(n-op>1?'s':'')+' today! 🎁 '+(need>0?'Pick '+need+' and swipe across '+(need>1?'them':'it')+' to rip '+(need>1?'them':'it')+' open!':'Keep swiping!'))}
- else{const left=GIFTS.filter(g=>canRip(g.id)).length;h.innerHTML='<span class="w">🎉</span> Happy Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎂</span>';
-  s.innerHTML=left?'Swipe across each present to rip it open! <b>'+left+'</b> to go 🎁':'All your presents are open. Have the best birthday ever! 💖🐱🦒🍫'}}
+ else{const left=GIFTS.filter(g=>canRip(g.id)).length;const eu=earlyUnlock();h.innerHTML=eu?'<span class="w">🎁</span> Surprise, Kelly! All your presents are unlocked early! <span class="w" style="animation-delay:-1.2s">🎈</span>':'<span class="w">🎉</span> Happy Birthday, Kelly! <span class="w" style="animation-delay:-1.2s">🎂</span>';
+  s.innerHTML=left?(eu?'No coins needed, open them all whenever you like! 💖 ':'')+'Swipe across each present to rip it open! <b>'+left+'</b> to go 🎁':(eu?'All your presents are open. Happy almost-birthday! 💖🐱🦒🍫':'All your presents are open. Have the best birthday ever! 💖🐱🦒🍫')}}
 let lastPhase='';function renderAll(){const grid=$('kgGrid');if(!grid)return;lastPhase=phase();GIFTS.forEach((g,i)=>{let el=grid.querySelector('.kgItem[data-id="'+CSS.escape(g.id)+'"]');if(!el){el=document.createElement('div');el.className='kgItem';el.dataset.id=g.id;grid.appendChild(el)}renderItem(el,g,i)});banner()}
 // ---- locked tap: wiggle + No peeking ----
 let msgT=0;function noPeek(box){box.classList.remove('wig');void box.offsetWidth;box.classList.add('wig');jingle();const L=fmtLeft(),p=phase();
