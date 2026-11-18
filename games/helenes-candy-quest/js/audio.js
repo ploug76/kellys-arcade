@@ -67,6 +67,8 @@ const S={
   jump(){if(!ok())return; const t=ctx.currentTime, o=tone(420,t,0.16,'sine',0.12); o.frequency.exponentialRampToValueAtTime(760,t+0.12);},
   bounce(){if(!ok())return; const t=ctx.currentTime; bell(86,t,0.2,0.12); bell(93,t+0.06,0.22,0.1);},
   candy(){if(!ok())return; const t=ctx.currentTime; bell(96,t,0.18,0.12); bell(100,t+0.05,0.22,0.1);},
+  match(chain){if(!ok())return; const t=ctx.currentTime, b=84+Math.min(12,(chain||1)*2); bell(b,t,0.22,0.14); if(chain>1) bell(b+4,t+0.05,0.2,0.1);},
+  special(){if(!ok())return; const t=ctx.currentTime; [0,4,7,12].forEach((d,i)=>bell(86+d,t+i*0.04,0.28,0.1));},
   flag(){if(!ok())return; const t=ctx.currentTime; [0,4,7].forEach((d,i)=>bell(79+d,t+i*0.06,0.3,0.1));},
   hurt(){if(!ok())return; const t=ctx.currentTime; tone(240,t,0.18,'triangle',0.16); tone(180,t+0.06,0.2,'triangle',0.12);},
   fail(){if(!ok())return; const t=ctx.currentTime; [0,-2,-5].forEach((d,i)=>bell(72+d,t+i*0.1,0.35,0.1));},

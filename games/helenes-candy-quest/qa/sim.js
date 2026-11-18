@@ -1,74 +1,83 @@
-/* Beat every level with a simple kid-style player: run right, hop at gaps,
-   jawbreakers and jellies. Run: node qa/sim.js */
+/* Greedy player: can these match-3 levels be finished?
+   Run: node qa/sim.js */
 'use strict';
-const W = require('../js/world.js');
+const L = require('../js/logic.js');
+const LEVELS = require('../js/levels.js');
+L.setNC(6); L.setSPC(0);
 
-function surfaceUnder(solids, x, foot){
-  let best=null;
-  for(const s of solids){
-    if(x < s.x-6 || x > s.x+s.w+6) continue;
-    if(s.y >= foot-10 && s.y <= foot+22){
-      if(!best || s.y < best.y) best=s;
-    }
-  }
-  return best;
+function clone(B){return L.unserial(L.serial(B))}
+function needMap(goal){
+  if(!goal || goal.type!=='collect') return null;
+  const m={};
+  for(const [c] of goal.need) m[c]=1;
+  return m;
 }
-function decide(run){
-  const p=run.p, foot=p.y+p.h;
-  const solids=W.allSolids(run);
-  const here=surfaceUnder(solids, p.x+p.w*0.5, foot);
-  const ahead=surfaceUnder(solids, p.x+p.w+58, foot);
-  let jump=false;
-  if(p.grounded && here && !ahead) jump=true;
-  if(p.grounded){
-    for(const s of solids){
-      if(s===p.ground) continue;
-      if(s.y < foot-16 && s.y > foot-150 && s.x < p.x+p.w+86 && s.x+s.w > p.x+p.w-8 && s.x > p.x-20) jump=true;
+function bestMove(B, need){
+  const moves=L.allMoves(B);
+  if(!moves.length) return null;
+  let best=null, score=-1;
+  for(const [a,b] of moves){
+    const C=clone(B);
+    L.swapCells(C,a,b);
+    const pre=L.swapPre(C,a,b);
+    const st=L.computeStep(C,[L.K(a.r,a.c),L.K(b.r,b.c)],pre);
+    if(!st) continue;
+    let s=st.clear.size*10+st.cre.length*40;
+    if(need){
+      for(const k of st.clear){
+        const g=C[L.KR(k)][L.KC(k)];
+        if(g && need[g.c]) s+=30;
+      }
     }
-    for(const h of run.lvl.hazards){
-      if(h.kind==='puddle') continue;
-      if(h.x < p.x+p.w+78 && h.x+h.w > p.x+p.w-6 && h.y < foot && h.y+h.h > p.y+10) jump=true;
-    }
-    for(const c of run.lvl.candies){
-      if(run.got[c.id]) continue;
-      if(Math.abs(c.x-(p.x+p.w/2))<34 && c.y < p.y-6) jump=true;
-    }
+    if(st.cre.some(c=>c.s==='x')) s+=80;
+    if(s>score){score=s; best=[a,b];}
   }
-  return jump;
+  return best||moves[0];
 }
-
-function play(i){
-  const run=W.createRun(i);
-  let armed=false, stuckT=0, lastX=run.p.x, worst=run.p.x;
-  const dt=1/60;
-  for(let f=0; f<60*90; f++){
-    const want=decide(run);
-    let pulse=false;
-    if(!run.p.grounded) armed=false;
-    if(want && run.p.grounded && !armed){pulse=true; armed=true;}
-    if(stuckT>1.2 && run.p.grounded){pulse=true; stuckT=0;}
-    W.step(run, {left:false, right:true, jump:pulse}, dt);
-    if(run.p.x > lastX+8){stuckT=0; lastX=run.p.x;} else stuckT+=dt;
-    if(run.p.x>worst) worst=run.p.x;
-    if(run.won||run.over) break;
-    if(stuckT>5) return {ok:false, why:'stuck', run, t:run.t, x:run.p.x};
+function playOnce(def){
+  let B=L.newBoard();
+  let score=0, moves=def.moves;
+  const got={};
+  const need=needMap(def.goal);
+  let guard=0;
+  while(moves>0 && guard<400){
+    guard++;
+    let mv=bestMove(B, need);
+    if(!mv){ if(!L.shuffleBoard(B)) return false; continue; }
+    const [a,b]=mv;
+    L.swapCells(B,a,b);
+    let pre=L.swapPre(B,a,b);
+    let chain=0;
+    let st=L.computeStep(B,[L.K(a.r,a.c),L.K(b.r,b.c)],pre);
+    while(st){
+      chain++;
+      for(const k of st.clear){
+        const g=B[L.KR(k)][L.KC(k)];
+        if(g && g.c>=0) got[g.c]=(got[g.c]||0)+1;
+      }
+      score += st.clear.size*10*chain + st.cre.length*40;
+      L.applyClear(B, st);
+      L.applyGravity(B);
+      for(let r=0;r<L.N;r++) for(let c=0;c<L.N;c++){ const g=B[r][c]; if(g){g.x=c; g.y=r;} }
+      st=L.computeStep(B,null,null);
+    }
+    moves--;
+    if(won(def, score, got)) return {ok:true, score, moves, got};
   }
-  if(run.won) return {ok:true, run};
-  if(run.over) return {ok:false, why:'dead', run, t:run.t, x:run.p.x};
-  return {ok:false, why:'timeout', run, t:run.t, x:run.p.x};
+  return {ok:false, score, moves, got};
 }
-
+function won(def, score, got){
+  const g=def.goal;
+  if(g.type==='score') return score>=g.target;
+  return g.need.every(([c,n]) => (got[c]||0)>=n);
+}
 let failed=0;
-for(let i=0;i<W.LEVELS.length;i++){
-  const r=play(i);
-  const L=W.LEVELS[i];
-  if(!r.ok){
-    failed++;
-    const p=r.run.p;
-    console.log('FAIL', L.name, r.why, 't='+r.t.toFixed(1), 'x='+p.x.toFixed(0), 'y='+p.y.toFixed(0), 'hearts='+p.hearts, 'candy='+r.run.candies+'/'+r.run.lvl.candies.length, 'score='+r.run.score);
-  }else{
-    console.log('OK  ', L.name, 'stars='+r.run.stars, 'candy='+r.run.candies+'/'+r.run.lvl.candies.length, 'score='+r.run.score, 'hearts='+r.run.p.hearts, 't='+r.run.t.toFixed(1)+'s');
-  }
+for(const def of LEVELS){
+  let wins=0, last=null;
+  for(let t=0;t<4;t++){ last=playOnce(def); if(last.ok) wins++; }
+  const mark=wins>=3?'OK ':'WEAK';
+  if(wins<3) failed++;
+  console.log(mark, 'L'+def.id, def.name, 'moves='+def.moves, def.goal.type, 'wins='+wins+'/4', 'sampleScore='+(last&&last.score));
 }
-if(failed){console.error(failed+' level(s) failed'); process.exit(1);}
-console.log('All '+W.LEVELS.length+' levels cleared.');
+if(failed){ console.error(failed+' level(s) were hard for the greedy player'); process.exit(1); }
+console.log('All '+LEVELS.length+' levels cleared on at least 3 of 4 tries.');
